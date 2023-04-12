@@ -2,27 +2,6 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
 
-
-    # def __init__(self, parent=None):
-    #     QWidget.__init__(self, parent)
-
-    #     self.button_layout = QHBoxLayout()
-    #     self.widget_layout = QVBoxLayout()
-    #     tables = ['courses','teachers','students','subject_area','progress','manager','progress']
-    #     for i in range(len(tables)):
-    #         button = QToolButton()
-    #         button.setText(str(tables[i]))
-    #         button.setObjectName(f'Button_{tables[i]}')
-    #         button.released.connect(self.button_released)
-    #         button.move (10, 100)
-    #         self.button_layout.addWidget(button)
-         
-    #     self.status_label = QLabel('No button clicked')
-
-    #     self.widget_layout.addItem(self.button_layout)
-    #     self.widget_layout.addWidget(self.status_label)
-    #     self.setLayout(self.widget_layout)
-    
 class All_tables(QWidget):    
 
     def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','progress','manager','progress']):

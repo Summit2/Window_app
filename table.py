@@ -6,7 +6,7 @@ from posgre_server import Server
 
 class Table(QWidget):    
 
-    def __init__(self, parent=None, name = ''):
+    def __init__(self, parent=None, name = 'table'):
         QWidget.__init__(self, parent)
         self.setWindowTitle(f"Таблица {name}")
         
@@ -14,13 +14,15 @@ class Table(QWidget):
         #добавление фона  
         self.layout = QVBoxLayout(self)
 
-        self.update_button = QPushButton("Добавление записи")
+        self.insert_button = QPushButton(f"Просмотр таблицы {name}\n и связанных с ней")
+        self.layout.addWidget(self.insert_button)
+        self.insert_button.setGeometry(50, 50, 100, 50)
+
+        self.update_button = QPushButton(f"Добавление записи в таблицу {name}")
         self.layout.addWidget(self.update_button)
         self.update_button.move(0, 100)
 
-        self.insert_button = QPushButton("Просмотр таблицы")
-        self.layout.addWidget(self.insert_button)
-        self.insert_button.setGeometry(50, 50, 100, 50)
+        
         
 
         self.insert_button.clicked.connect(self.insert)

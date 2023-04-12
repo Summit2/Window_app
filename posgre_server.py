@@ -15,9 +15,8 @@ class Server:
             cur = conn.cursor()
             
         # execute a statement
-            print('PostgreSQL database version:')
-            cur.execute('SELECT version()')
-            l = cur.execute('SELECT * from manager')
+            
+            l = cur.execute('SELECT * from progress')
             print(l)
             # display the PostgreSQL database server version
             db_version = cur.fetchone()
@@ -32,6 +31,11 @@ class Server:
                 conn.close()
                 print('Database connection closed.')
 
-    
+    def INSERT(self, name = ''):
+        pass
+    def UPDATE(self,name = ''):
+        pass
+    def SELECT(self, name = ''):
+        pass
 if __name__ == '__main__':
     test = Server()
