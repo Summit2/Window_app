@@ -3,6 +3,8 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 #подключаем СУБД Postgre
 from posgre_server import Server
+#Подключаем вывод информации из таблицы
+from rows import ExactTable
 
 class Table(QWidget):    
 
@@ -38,6 +40,7 @@ class Table(QWidget):
     def button_released(self):
         #Сохранили объект, который посылает нам сигнал
         sending_button = self.sender()
+        
         # self.status_label.setText('%s Clicked!' % str(sending_button.objectName()))
         #Отправляем название той таблицы, откуда пришел сигнал
         button_name = sending_button.objectName()

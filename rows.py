@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
 
-class SimpleTable(QWidget):
+class ExactTable(QWidget):
     def __init__(self,tbl_name = ' ', tbl = {}):
         '''
         arguments  - tbl_name ->
