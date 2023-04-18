@@ -41,7 +41,7 @@ class Table(QWidget):
         # self.status_label.setText('%s Clicked!' % str(sending_button.objectName()))
         #Отправляем название той таблицы, откуда пришел сигнал
         button_name = sending_button.objectName()
-        print(button_name[7:])
+        # print(button_name[7:])
 if __name__ == '__main__':
   app = QApplication(sys.argv)
 

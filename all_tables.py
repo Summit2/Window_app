@@ -1,6 +1,7 @@
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
+from table import Table
 
 class All_tables(QWidget):    
 
@@ -29,10 +30,11 @@ class All_tables(QWidget):
     def button_released(self):
         #Сохранили объект, который посылает нам сигнал
         sending_button = self.sender()
-        # self.status_label.setText('%s Clicked!' % str(sending_button.objectName()))
-        #Отправляем название той таблицы, откуда пришел сигнал
+        
         button_name = sending_button.objectName()
         print(button_name[7:])
+        self.table = Table(None, button_name[7:])
+        self.table.show()
 if __name__ == '__main__':
   app = QApplication(sys.argv)
 

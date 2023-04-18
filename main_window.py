@@ -2,7 +2,7 @@
 import sys
 from PySide6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout, QPushButton
-from test import All_tables
+from all_tables import All_tables
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
