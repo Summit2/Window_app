@@ -23,7 +23,7 @@ class MainWindow(QWidget):
         
         self.layout.addWidget(self.tables_button)
         
-        self.tables_button.move(0, 100)
+        # self.tables_button.move(0, 100)
         # self.label.setText('Button clicked!')
 
         self.tables_button.clicked.connect(self.tables)
@@ -36,15 +36,15 @@ class MainWindow(QWidget):
     def tables(self):
         
         self.tables_button.hide()
-        self.t = All_tables()
-        self.layout.addWidget(self.t)
+        # self.t = All_tables()
+        # self.layout.addWidget(self.t)
     
 
         
     
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
+    
     # widget = MainWindow()
     
     # widget.show()

@@ -174,7 +174,7 @@ class AboutDialog(QDialog):
 
         layout = QVBoxLayout()
 
-        title = QLabel("STDMGMT")
+        title = QLabel("Ilya Sokolov, \nBMSTU STUDENT")
         font = title.font()
         font.setPointSize(20)
         title.setFont(font)
