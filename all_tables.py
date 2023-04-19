@@ -1,13 +1,19 @@
 import sys
-from PySide6 import QtCore, QtWidgets, QtGui
-from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
+# from PySide6 import QtCore, QtWidgets, QtGui
+# from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
 from table import Table
+from auth import AuthDialog
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtPrintSupport import *
 
 class All_tables(QWidget):    
 
     def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','progress','manager','progress']):
         QWidget.__init__(self, parent)
         self.setWindowTitle("Таблицы")
+        self.isAdmin =None
         self.button_layout = QVBoxLayout()  # change to vertical layout
         self.widget_layout = QVBoxLayout()
         tables = t
@@ -24,9 +30,10 @@ class All_tables(QWidget):
 
         self.widget_layout.addLayout(self.button_layout)  # add vertical layout to main layout
         # self.widget_layout.addWidget(self.status_label)
-        self.setLayout(self.widget_layout)
+        if self.layout() is None:
+            self.setLayout(self.widget_layout)
 
-    @QtCore.Slot()
+    @pyqtSlot()
     def button_released(self):
         #Сохранили объект, который посылает нам сигнал
         sending_button = self.sender()
@@ -35,10 +42,25 @@ class All_tables(QWidget):
         print(button_name[7:])
         self.table = Table(None, button_name[7:])
         self.table.show()
+
 if __name__ == '__main__':
-  app = QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
-  widget = All_tables()
-  widget.show()
-
-  sys.exit(app.exec())
+    window = All_tables()
+    passdlg = AuthDialog()
+    passdlg.show()
+    
+    
+    if (passdlg.exec_() == QDialog.Accepted):
+        
+        window.isAdmin = passdlg.isAdmin
+        window.show()
+        
+    sys.exit(app.exec())
+#   app = QApplication(sys.argv)
+# passdlg = LoginDialog()
+# if(passdlg.exec_() == QDialog.Accepted):
+#     window = MainWindow()
+#     window.show()
+#     window.loaddata()
+# sys.exit(app.exec_())

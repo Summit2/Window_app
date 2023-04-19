@@ -1,11 +1,14 @@
 import sys
-from PySide6 import QtCore, QtWidgets, QtGui
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
+# from PySide6 import QtCore, QtWidgets, QtGui
+# from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 #подключаем СУБД Postgre
 from posgre_server import Server
 #Подключаем вывод информации из таблицы
 from rows import PushedTable
-
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtPrintSupport import *
 class Table(QWidget):    
 
     def __init__(self, parent=None, name = 'table'):
@@ -30,11 +33,11 @@ class Table(QWidget):
         self.insert_button.clicked.connect(self.insert)
         self.update_button.clicked.connect(self.update)
     
-    @QtCore.Slot()
+    @pyqtSlot()
     def insert(self):
         pass
     
-    @QtCore.Slot()
+    @pyqtSlot()
     def update(self):
         pass
     def button_released(self):
