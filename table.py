@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLay
 #подключаем СУБД Postgre
 from posgre_server import Server
 #Подключаем вывод информации из таблицы
-from rows import ExactTable
+from rows import PushedTable
 
 class Table(QWidget):    
 
