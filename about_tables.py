@@ -1,5 +1,4 @@
 
-
 table_info ={
 
     'students' : {
@@ -29,3 +28,7 @@ table_info ={
 
 
 }
+
+
+
+print(list(table_info.keys()))

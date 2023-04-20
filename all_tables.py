@@ -8,9 +8,12 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtPrintSupport import *
 
+from rows import PushedTable
+
+from about_tables import table_info
 class All_tables(QWidget):    
 
-    def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','manager','progress']):
+    def __init__(self, parent=None, t = list(table_info.keys())):
         QWidget.__init__(self, parent)
         self.setWindowTitle("Таблицы")
         self.isAdmin =None
@@ -40,8 +43,11 @@ class All_tables(QWidget):
         
         button_name = sending_button.objectName()
         print(button_name[7:])
-        self.table = Table(None, button_name[7:])
-        self.table.show()
+        # self.table = Table(None, button_name[7:])
+        self.window = PushedTable(button_name[7:])
+        self.window.show()
+        self.window.loaddata()
+        # self.table.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
