@@ -7,8 +7,8 @@ import sys,sqlite3,time
 import os
 
 class InsertDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(InsertDialog, self).__init__(*args, **kwargs)
+    def __init__(self,tbl =''):
+        super(InsertDialog, self).__init__( )
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Register")
@@ -83,8 +83,8 @@ class InsertDialog(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
 
 class SearchDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(SearchDialog, self).__init__(*args, **kwargs)
+    def __init__(self,  ):
+        super(SearchDialog, self).__init__( )
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Search")
@@ -121,8 +121,8 @@ class SearchDialog(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not Find student from the database.')
 
 class DeleteDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(DeleteDialog, self).__init__(*args, **kwargs)
+    def __init__(self,  ):
+        super(DeleteDialog, self).__init__( )
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Delete")
@@ -161,8 +161,8 @@ class DeleteDialog(QDialog):
 
 
 class AboutDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(AboutDialog, self).__init__(*args, **kwargs)
+    def __init__(self,  ):
+        super(AboutDialog, self).__init__( )
 
         self.setFixedWidth(300)
         self.setFixedHeight(250)
@@ -198,8 +198,8 @@ class AboutDialog(QDialog):
 
 
 class PushedTable(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super(PushedTable, self).__init__(*args, **kwargs)
+    def __init__(self,  ):
+        super(PushedTable, self).__init__( )
 
         self.conn = sqlite3.connect("database.db")
         self.c = self.conn.cursor()
