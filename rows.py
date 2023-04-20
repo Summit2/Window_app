@@ -197,14 +197,19 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 
+from about_tables import table_info
+from posgre_server import Server
 class PushedTable(QMainWindow):
-    def __init__(self,  ):
+    def __init__(self, tbl_name = 'manager'):
         super(PushedTable, self).__init__( )
-
-        self.conn = sqlite3.connect("database.db")
-        self.c = self.conn.cursor()
-        self.c.execute("CREATE TABLE IF NOT EXISTS students(roll INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT,branch TEXT,sem INTEGER,mobile INTEGER,address TEXT)")
-        self.c.close()
+        
+        #запомнили название таблицы
+        self.tbl_name = tbl_name
+        self.columns = table_info[tbl_name]['columns']
+        # self.conn = sqlite3.connect("database.db")
+        # self.c = self.conn.cursor()
+        # self.c.execute("CREATE TABLE IF NOT EXISTS students(roll INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT,branch TEXT,sem INTEGER,mobile INTEGER,address TEXT)")
+        # self.c.close()
 
         file_menu = self.menuBar().addMenu("&File")
 
@@ -216,14 +221,14 @@ class PushedTable(QMainWindow):
         self.tableWidget = QTableWidget()
         self.setCentralWidget(self.tableWidget)
         self.tableWidget.setAlternatingRowColors(True)
-        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setColumnCount(len(self.columns)) #указываем количество колонок
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidget.verticalHeader().setStretchLastSection(False)
-        self.tableWidget.setHorizontalHeaderLabels(("Roll No.", "Name", "Branch", "Sem", "Mobile","Address"))
+        self.tableWidget.setHorizontalHeaderLabels(self.columns) #указываем названия колонок
 
         toolbar = QToolBar()
         toolbar.setMovable(False)
@@ -232,31 +237,31 @@ class PushedTable(QMainWindow):
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
 
-        btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add Student", self)
+        btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add ", self)
         btn_ac_adduser.triggered.connect(self.insert)
-        btn_ac_adduser.setStatusTip("Add Student")
+        btn_ac_adduser.setStatusTip("Add ")
         toolbar.addAction(btn_ac_adduser)
 
         btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
         btn_ac_refresh.triggered.connect(self.loaddata)
-        btn_ac_refresh.setStatusTip("Refresh Table")
+        btn_ac_refresh.setStatusTip("Refresh")
         toolbar.addAction(btn_ac_refresh)
 
         btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
         btn_ac_search.triggered.connect(self.search)
-        btn_ac_search.setStatusTip("Search User")
+        btn_ac_search.setStatusTip("Search")
         toolbar.addAction(btn_ac_search)
 
         btn_ac_delete = QAction(QIcon("icon/trash.png"), "Delete", self)
         btn_ac_delete.triggered.connect(self.delete)
-        btn_ac_delete.setStatusTip("Delete User")
+        btn_ac_delete.setStatusTip("Delete")
         toolbar.addAction(btn_ac_delete)
 
-        adduser_action = QAction(QIcon("icon/add.png"),"Insert Student", self)
+        adduser_action = QAction(QIcon("icon/add.png"),"Insert", self)
         adduser_action.triggered.connect(self.insert)
         file_menu.addAction(adduser_action)
 
-        searchuser_action = QAction(QIcon("icon/search.png"), "Search Student", self)
+        searchuser_action = QAction(QIcon("icon/search.png"), "Search", self)
         searchuser_action.triggered.connect(self.search)
         file_menu.addAction(searchuser_action)
 
@@ -270,15 +275,19 @@ class PushedTable(QMainWindow):
         help_menu.addAction(about_action)
 
     def loaddata(self):
-        self.connection = sqlite3.connect("database.db")
-        query = "SELECT * FROM students"
-        result = self.connection.execute(query)
+        # self.connection = sqlite3.connect("database.db")
+        # query = "SELECT * FROM students"
+        # result = self.connection.execute(query)
+        #создали соединение
+        self.server = Server()
+        #взяли данные из таблицы
+        table_data = self.server.SELECT(self.tbl_name) 
         self.tableWidget.setRowCount(0)
-        for row_number, row_data in enumerate(result):
+        for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
             for column_number, data in enumerate(row_data):
                 self.tableWidget.setItem(row_number, column_number,QTableWidgetItem(str(data)))
-        self.connection.close()
+        # self.connection.close()
 
     def handlePaintRequest(self, printer):
         document = QTextDocument()

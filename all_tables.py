@@ -10,7 +10,7 @@ from PyQt5.QtPrintSupport import *
 
 class All_tables(QWidget):    
 
-    def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','progress','manager','progress']):
+    def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','manager','progress']):
         QWidget.__init__(self, parent)
         self.setWindowTitle("Таблицы")
         self.isAdmin =None
