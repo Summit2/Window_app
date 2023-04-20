@@ -31,7 +31,9 @@ class InsertDialog(QDialog):
         for items in self.columns[1:] :
             self.nameinput = QLineEdit()
             self.nameinput.setPlaceholderText(items)
+            self.nameinput.setObjectName(f'input_{items}')
             layout.addWidget(self.nameinput)
+            
             
         # self.branchinput = QComboBox()
         # for items in columns[1:] :
@@ -46,13 +48,7 @@ class InsertDialog(QDialog):
 
         # self.seminput = QComboBox()
         # self.seminput.addItem("1")
-        # self.seminput.addItem("2")
-        # self.seminput.addItem("3")
-        # self.seminput.addItem("4")
-        # self.seminput.addItem("5")
-        # self.seminput.addItem("6")
-        # self.seminput.addItem("7")
-        # self.seminput.addItem("8")
+        
         # layout.addWidget(self.seminput)
 
         # self.mobileinput = QLineEdit()
@@ -60,10 +56,7 @@ class InsertDialog(QDialog):
         # # self.mobileinput.setInputMask('99999 99999')
         # layout.addWidget(self.mobileinput)
 
-        # self.addressinput = QLineEdit()
-        # self.addressinput.setPlaceholderText("Address")
-        # layout.addWidget(self.addressinput)
-
+        
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
 
@@ -85,8 +78,9 @@ class InsertDialog(QDialog):
         
         self.values = []
         for items in self.columns[1:] :
+            name = str(self.nameinput.objectName())[5:]
+            print(name)
             
-           
             self.values.append(self.nameinput.text())
 
         try:
@@ -99,7 +93,6 @@ class InsertDialog(QDialog):
             # self.conn.close()
             server = Server()
             server.INSERT(self.tbl_name, self.columns, self.values)
-            # server.INSERT("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
             
             server.exit()
 

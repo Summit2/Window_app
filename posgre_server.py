@@ -11,12 +11,13 @@ class Server:
 
         # Open a cursor to perform database operations
         self.cur = self.conn.cursor()
-    def INSERT(self, tbl_name = '',columns= [],values = []):
-        
-        col = ','.join(columns)
+    def INSERT(self, tbl_name = '',columns= None,values = []):
+        if columns == None:
+            columns = table_info[tbl_name]['columns']
+        col = ','.join(columns[1:])
         v = ','.join(values)
-        print(f'INSERT INTO {tbl_name} ({col[:-1]}) values ({v[:-1]});')
-        self.cur.execute(f'INSERT INTO {tbl_name} ({col[:-1]}) values ({v[:-1]});')
+        print(f'INSERT INTO {tbl_name} ({col}) values ({v});')
+        self.cur.execute(f'INSERT INTO {tbl_name} ({col}) values ({v});')
     def UPDATE(self,name = ''):
             pass
     def SELECT(self, tbl_name = ''):
@@ -37,3 +38,4 @@ class Server:
 if __name__ == '__main__':
         test = Server()
         print(test.SELECT('manager'))
+        test.INSERT('manager','')
