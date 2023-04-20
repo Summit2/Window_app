@@ -57,10 +57,3 @@ if __name__ == '__main__':
         window.show()
         
     sys.exit(app.exec())
-#   app = QApplication(sys.argv)
-# passdlg = LoginDialog()
-# if(passdlg.exec_() == QDialog.Accepted):
-#     window = MainWindow()
-#     window.show()
-#     window.loaddata()
-# sys.exit(app.exec_())
