@@ -27,12 +27,12 @@ class InsertDialog(QDialog):
 
         layout = QVBoxLayout()
         
-        
-        for items in columns[1:] :
+        self.values = []
+        for items in self.columns[1:] :
             self.nameinput = QLineEdit()
             self.nameinput.setPlaceholderText(items)
             layout.addWidget(self.nameinput)
-
+            
         # self.branchinput = QComboBox()
         # for items in columns[1:] :
 
@@ -55,31 +55,40 @@ class InsertDialog(QDialog):
         # self.seminput.addItem("8")
         # layout.addWidget(self.seminput)
 
-        self.mobileinput = QLineEdit()
-        self.mobileinput.setPlaceholderText("Mobile")
-        # self.mobileinput.setInputMask('99999 99999')
-        layout.addWidget(self.mobileinput)
+        # self.mobileinput = QLineEdit()
+        # self.mobileinput.setPlaceholderText("Mobile")
+        # # self.mobileinput.setInputMask('99999 99999')
+        # layout.addWidget(self.mobileinput)
 
-        self.addressinput = QLineEdit()
-        self.addressinput.setPlaceholderText("Address")
-        layout.addWidget(self.addressinput)
+        # self.addressinput = QLineEdit()
+        # self.addressinput.setPlaceholderText("Address")
+        # layout.addWidget(self.addressinput)
 
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
 
     def add(self):
 
-        name = ""
-        branch = ""
-        sem = -1
-        mobile = -1
-        address = ""
+        # name = ""
+        # branch = ""
+        # sem = -1
+        # mobile = -1
+        # address = ""
 
-        name = self.nameinput.text()
-        branch = self.branchinput.itemText(self.branchinput.currentIndex())
-        sem = self.seminput.itemText(self.seminput.currentIndex())
-        mobile = self.mobileinput.text()
-        address = self.addressinput.text()
+        # name = self.nameinput.text()
+        # branch = self.branchinput.itemText(self.branchinput.currentIndex())
+        # sem = self.seminput.itemText(self.seminput.currentIndex())
+        # mobile = self.mobileinput.text()
+        # address = self.addressinput.text()
+
+        
+        
+        self.values = []
+        for items in self.columns[1:] :
+            
+           
+            self.values.append(self.nameinput.text())
+
         try:
 
             # self.conn = sqlite3.connect("database.db")
@@ -89,7 +98,7 @@ class InsertDialog(QDialog):
             # self.c.close()
             # self.conn.close()
             server = Server()
-            server.INSERT(self.tbl_name, self.columns, values)
+            server.INSERT(self.tbl_name, self.columns, self.values)
             # server.INSERT("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
             
             server.exit()
@@ -98,6 +107,7 @@ class InsertDialog(QDialog):
             self.close()
 
         except Exception:
+            print(Exception)
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
 
 class SearchDialog(QDialog):

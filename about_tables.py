@@ -2,7 +2,8 @@
 table_info ={
 
     'students' : {
-        'columns': ['id_student','fio','login','pswd', 'email']
+        'columns': ['id_student','fio','login','pswd', 'email'],
+        'fkey': None
     },
     'manager': {
         'columns': ['id_manager','full_name','login','pswd','email','id_area']

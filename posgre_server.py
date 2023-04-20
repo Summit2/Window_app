@@ -15,6 +15,7 @@ class Server:
         
         col = ','.join(columns)
         v = ','.join(values)
+        print(f'INSERT INTO {tbl_name} ({col[:-1]}) values ({v[:-1]});')
         self.cur.execute(f'INSERT INTO {tbl_name} ({col[:-1]}) values ({v[:-1]});')
     def UPDATE(self,name = ''):
             pass
