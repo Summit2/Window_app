@@ -6,48 +6,58 @@ import sys,sqlite3,time
 
 import os
 
+from about_tables import table_info
+from posgre_server import Server
+
 class InsertDialog(QDialog):
-    def __init__(self,tbl =''):
+    def __init__(self,tbl_name = 'students', columns = []):
         super(InsertDialog, self).__init__( )
+
+        self.tbl_name =tbl_name
+        self.columns = columns
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Register")
 
-        self.setWindowTitle("Add Student")
+        self.setWindowTitle(f"Add {tbl_name}")
         self.setFixedWidth(300)
         self.setFixedHeight(250)
 
         self.QBtn.clicked.connect(self.add)
 
         layout = QVBoxLayout()
+        
+        
+        for items in columns[1:] :
+            self.nameinput = QLineEdit()
+            self.nameinput.setPlaceholderText(items)
+            layout.addWidget(self.nameinput)
 
-        self.nameinput = QLineEdit()
-        self.nameinput.setPlaceholderText("Name")
-        layout.addWidget(self.nameinput)
+        # self.branchinput = QComboBox()
+        # for items in columns[1:] :
 
-        self.branchinput = QComboBox()
-        self.branchinput.addItem("Mechanical")
-        self.branchinput.addItem("Civil")
-        self.branchinput.addItem("Electrical")
-        self.branchinput.addItem("Electronics and Communication")
-        self.branchinput.addItem("Computer Science")
-        self.branchinput.addItem("Information Technology")
-        layout.addWidget(self.branchinput)
+        #     self.branchinput.addItem(items)
+        # #     self.branchinput.addItem("Civil")
+        # # self.branchinput.addItem("Electrical")
+        # # self.branchinput.addItem("Electronics and Communication")
+        # # self.branchinput.addItem("Computer Science")
+        # # self.branchinput.addItem("Information Technology")
+        # layout.addWidget(self.branchinput)
 
-        self.seminput = QComboBox()
-        self.seminput.addItem("1")
-        self.seminput.addItem("2")
-        self.seminput.addItem("3")
-        self.seminput.addItem("4")
-        self.seminput.addItem("5")
-        self.seminput.addItem("6")
-        self.seminput.addItem("7")
-        self.seminput.addItem("8")
-        layout.addWidget(self.seminput)
+        # self.seminput = QComboBox()
+        # self.seminput.addItem("1")
+        # self.seminput.addItem("2")
+        # self.seminput.addItem("3")
+        # self.seminput.addItem("4")
+        # self.seminput.addItem("5")
+        # self.seminput.addItem("6")
+        # self.seminput.addItem("7")
+        # self.seminput.addItem("8")
+        # layout.addWidget(self.seminput)
 
         self.mobileinput = QLineEdit()
         self.mobileinput.setPlaceholderText("Mobile")
-        self.mobileinput.setInputMask('99999 99999')
+        # self.mobileinput.setInputMask('99999 99999')
         layout.addWidget(self.mobileinput)
 
         self.addressinput = QLineEdit()
@@ -71,19 +81,27 @@ class InsertDialog(QDialog):
         mobile = self.mobileinput.text()
         address = self.addressinput.text()
         try:
-            self.conn = sqlite3.connect("database.db")
-            self.c = self.conn.cursor()
-            self.c.execute("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
-            self.conn.commit()
-            self.c.close()
-            self.conn.close()
-            QMessageBox.information(QMessageBox(),'Successful','Student is added successfully to the database.')
+
+            # self.conn = sqlite3.connect("database.db")
+            # self.c = self.conn.cursor()
+            # self.c.execute("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
+            # self.conn.commit()
+            # self.c.close()
+            # self.conn.close()
+            server = Server()
+            server.INSERT(self.tbl_name, self.columns, values)
+            # server.INSERT("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
+            
+            server.exit()
+
+            QMessageBox.information(QMessageBox(),'Successful','Info added successfully to the database.')
             self.close()
+
         except Exception:
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
 
 class SearchDialog(QDialog):
-    def __init__(self,  ):
+    def __init__(self, tbl_name = 'students', columns = [] ):
         super(SearchDialog, self).__init__( )
 
         self.QBtn = QPushButton()
@@ -121,7 +139,7 @@ class SearchDialog(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not Find student from the database.')
 
 class DeleteDialog(QDialog):
-    def __init__(self,  ):
+    def __init__(self,tbl_name = 'students', columns = []  ):
         super(DeleteDialog, self).__init__( )
 
         self.QBtn = QPushButton()
@@ -161,7 +179,7 @@ class DeleteDialog(QDialog):
 
 
 class AboutDialog(QDialog):
-    def __init__(self,  ):
+    def __init__(self):
         super(AboutDialog, self).__init__( )
 
         self.setFixedWidth(300)
@@ -187,8 +205,7 @@ class AboutDialog(QDialog):
 
         layout.addWidget(title)
 
-        layout.addWidget(QLabel("Version 5.3.2"))
-        layout.addWidget(QLabel("Copyright 2018 CYB Inc."))
+        layout.addWidget(QLabel("GROUP IU5-43B"))
         layout.addWidget(labelpic)
 
 
@@ -197,8 +214,7 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 
-from about_tables import table_info
-from posgre_server import Server
+
 class PushedTable(QMainWindow):
     def __init__(self, tbl_name = 'manager'):
         super(PushedTable, self).__init__( )
@@ -214,7 +230,7 @@ class PushedTable(QMainWindow):
         file_menu = self.menuBar().addMenu("&File")
 
         help_menu = self.menuBar().addMenu("&About")
-        self.setWindowTitle("Student Management CRUD")
+        self.setWindowTitle("Info")
 
         self.setMinimumSize(800, 600)
 
@@ -302,15 +318,15 @@ class PushedTable(QMainWindow):
         document.print_(printer)
 
     def insert(self):
-        dlg = InsertDialog()
+        dlg = InsertDialog(self.tbl_name, self.columns)
         dlg.exec_()
 
     def delete(self):
-        dlg = DeleteDialog()
+        dlg = DeleteDialog(self.tbl_name, self.columns)
         dlg.exec_()
 
     def search(self):
-        dlg = SearchDialog()
+        dlg = SearchDialog(self.tbl_name, self.columns)
         dlg.exec_()
 
     def about(self):

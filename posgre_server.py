@@ -11,8 +11,11 @@ class Server:
 
         # Open a cursor to perform database operations
         self.cur = self.conn.cursor()
-    def INSERT(self, name = ''):
-            pass
+    def INSERT(self, tbl_name = '',columns= [],values = []):
+        
+        col = ','.join(columns)
+        v = ','.join(values)
+        self.cur.execute(f'INSERT INTO {tbl_name} ({col[:-1]}) values ({v[:-1]});')
     def UPDATE(self,name = ''):
             pass
     def SELECT(self, tbl_name = ''):
@@ -29,7 +32,7 @@ class Server:
             
             if self.conn is not None:
                 self.conn.close()
-                print('Database connection closed.')
+                # print('Database connection closed.')
 if __name__ == '__main__':
         test = Server()
         print(test.SELECT('manager'))
