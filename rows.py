@@ -29,8 +29,8 @@ class InsertDialog(QDialog):
         
         #генератор для последовательного взятия колонок
         gen  = self.get_column()
-        #массив значений для insert 
-        self.insert_values = []
+        
+        
         
         if self.tbl_name == 'students':
             
@@ -50,8 +50,6 @@ class InsertDialog(QDialog):
             layout.addWidget(self.input4) 
             layout.addWidget(self.input5) 
 
-            
-            
 
         elif self.tbl_name == 'manager':
         
@@ -139,25 +137,47 @@ class InsertDialog(QDialog):
             layout.addWidget(self.input4) 
             layout.addWidget(self.input5) 
 
-            
-        
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
     def get_column(self):
         for col in self.columns:
             yield str(col)
     def add(self):
-        self.insert_values.append(self.input2.text())
-        self.insert_values.append(self.input3.text())
-        
-        if self.tbl_name != 'subject_area':
-                self.insert_values.append(self.input4.text())
-                self.insert_values.append(self.input5.text())
-                
-        if (self.tbl_name == 'manager' or self.tbl_name == 'progress'):
-            self.insert_values.append(self.input6.text())
+        #массив значений для insert 
+        self.insert_values = []
 
-        
+        if self.tbl_name == 'students':
+            self.insert_values.append(f"'{self.input2.text()}'")
+            self.insert_values.append(f"'{self.input3.text()}'")
+            self.insert_values.append(f"'{self.input4.text()}'")
+            self.insert_values.append(f"'{self.input5.text()}'")
+
+        elif self.tbl_name == 'teachers':
+            self.insert_values.append(f"'{self.input2.text()}'")
+            self.insert_values.append(f"'{self.input3.text()}'")
+            self.insert_values.append(f"'{self.input4.text()}'")
+            self.insert_values.append(f"'{self.input5.text()}'")
+        elif self.tbl_name == 'courses':
+            self.insert_values.append(f"'{self.input2.text()}'")
+            self.insert_values.append(self.input3.text())
+            self.insert_values.append(self.input4.text())
+            self.insert_values.append(self.input5.text())
+        elif self.tbl_name == 'subject_area':
+            self.insert_values.append(f"'{self.input2.text()}'")
+        elif self.tbl_name == 'manager':
+            self.insert_values.append(f"'{self.input2.text()}'")
+            self.insert_values.append(f"'{self.input3.text()}'")
+            self.insert_values.append(f"'{self.input4.text()}'")
+            self.insert_values.append(f"'{self.input5.text()}'")
+            self.insert_values.append(self.input6.text())
+        elif self.tbl_name == 'progress':  
+            self.insert_values.append(self.input2.text())
+            self.insert_values.append(self.input3.text())
+            self.insert_values.append(self.input4.text())
+            self.insert_values.append(f"'{self.input5.text()}'")
+            self.insert_values.append(self.input6.text()) 
+
+        print(self.insert_values)
         try:
 
             server = Server()

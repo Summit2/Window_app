@@ -25,8 +25,8 @@ class Server:
         col = ','.join(columns[1:])
         v = ','.join(values)
 
-        # print(f'INSERT INTO {tbl_name} ({col}) values ({v});')
-        # print(values)
+        print(f'INSERT INTO {tbl_name} ({col}) values ({v});')
+        print(values)
         self.cur.execute(f'INSERT INTO {tbl_name} ({col}) values ({v});')
     def UPDATE(self,name = ''):
             pass
@@ -41,7 +41,7 @@ class Server:
         records = self.cur.fetchall()
         return records
     def exit(self):
-            
+            self.conn.commit()
             if self.conn is not None:
                 self.conn.close()
                 # print('Database connection closed.')
@@ -50,3 +50,4 @@ if __name__ == '__main__':
         print(test.SELECT('manager'))
         test.INSERT('manager',None,['223', '32233223', '2322', "'sokol@mail.ru'", '2'])
         print(test.SELECT('manager'))
+        test.exit()
