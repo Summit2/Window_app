@@ -44,7 +44,7 @@ class Server:
             self.conn.commit()
             if self.conn is not None:
                 self.conn.close()
-                # print('Database connection closed.')
+                
 if __name__ == '__main__':
         test = Server()
         print(test.SELECT('manager'))

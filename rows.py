@@ -190,7 +190,7 @@ class InsertDialog(QDialog):
             self.close()
 
         except Exception:
-            print(Exception)
+            # print(Exception)
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
 
 class SearchDialog(QDialog):
@@ -315,15 +315,11 @@ class PushedTable(QMainWindow):
         #запомнили название таблицы
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
-        # self.conn = sqlite3.connect("database.db")
-        # self.c = self.conn.cursor()
-        # self.c.execute("CREATE TABLE IF NOT EXISTS students(roll INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT,branch TEXT,sem INTEGER,mobile INTEGER,address TEXT)")
-        # self.c.close()
 
         file_menu = self.menuBar().addMenu("&File")
 
         help_menu = self.menuBar().addMenu("&About")
-        self.setWindowTitle("Info")
+        self.setWindowTitle("Панель управления")
 
         self.setMinimumSize(800, 600)
 
