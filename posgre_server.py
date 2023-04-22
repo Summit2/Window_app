@@ -12,11 +12,21 @@ class Server:
         # Open a cursor to perform database operations
         self.cur = self.conn.cursor()
     def INSERT(self, tbl_name = '',columns= None,values = []):
+        '''
+        входные данные:
+            название таблицы\n
+            массив колонок\n
+            значения колонок (кроме ID)
+
+
+        '''
         if columns == None:
             columns = table_info[tbl_name]['columns']
         col = ','.join(columns[1:])
         v = ','.join(values)
+
         print(f'INSERT INTO {tbl_name} ({col}) values ({v});')
+        print(values)
         self.cur.execute(f'INSERT INTO {tbl_name} ({col}) values ({v});')
     def UPDATE(self,name = ''):
             pass
@@ -38,4 +48,5 @@ class Server:
 if __name__ == '__main__':
         test = Server()
         print(test.SELECT('manager'))
-        test.INSERT('manager','')
+        test.INSERT('manager',None,['223', '32233223', '2322', 'sokol@mail.ru', '2'])
+        print(test.SELECT('manager'))

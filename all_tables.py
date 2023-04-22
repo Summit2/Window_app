@@ -16,7 +16,7 @@ class All_tables(QWidget):
     def __init__(self, parent=None, t = list(table_info.keys())):
         QWidget.__init__(self, parent)
         self.setWindowTitle("Таблицы")
-        self.isAdmin =None
+        self.isAdmin = None
         self.button_layout = QVBoxLayout()  # change to vertical layout
         self.widget_layout = QVBoxLayout()
         tables = t

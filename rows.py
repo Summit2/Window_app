@@ -10,7 +10,7 @@ from about_tables import table_info
 from posgre_server import Server
 
 class InsertDialog(QDialog):
-    def __init__(self,tbl_name = 'students', columns = []):
+    def __init__(self,tbl_name = 'students', columns = [], isAdmin = None):
         super(InsertDialog, self).__init__( )
 
         self.tbl_name =tbl_name
@@ -27,72 +27,142 @@ class InsertDialog(QDialog):
 
         layout = QVBoxLayout()
         
-        self.values = []
-        for items in self.columns[1:] :
-            self.nameinput = QLineEdit()
-            self.nameinput.setPlaceholderText(items)
-            self.nameinput.setObjectName(f'input_{items}')
-            layout.addWidget(self.nameinput)
-            
-            
-        # self.branchinput = QComboBox()
-        # for items in columns[1:] :
-
-        #     self.branchinput.addItem(items)
-        # #     self.branchinput.addItem("Civil")
-        # # self.branchinput.addItem("Electrical")
-        # # self.branchinput.addItem("Electronics and Communication")
-        # # self.branchinput.addItem("Computer Science")
-        # # self.branchinput.addItem("Information Technology")
-        # layout.addWidget(self.branchinput)
-
-        # self.seminput = QComboBox()
-        # self.seminput.addItem("1")
+        #генератор для последовательного взятия колонок
+        gen  = self.get_column()
+        #массив значений для insert 
+        self.insert_values = []
         
-        # layout.addWidget(self.seminput)
+        if self.tbl_name == 'students':
+            
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
+            self.input3 = QLineEdit()
+            self.input3.setPlaceholderText(next(gen))
+            self.input4 = QLineEdit()
+            self.input4.setPlaceholderText(next(gen))
+            self.input5 = QLineEdit()
+            self.input5.setPlaceholderText(next(gen))
+             
+            layout.addWidget(self.input2) 
+            layout.addWidget(self.input3) 
+            layout.addWidget(self.input4) 
+            layout.addWidget(self.input5) 
 
-        # self.mobileinput = QLineEdit()
-        # self.mobileinput.setPlaceholderText("Mobile")
-        # # self.mobileinput.setInputMask('99999 99999')
-        # layout.addWidget(self.mobileinput)
+            
+            
 
+        elif self.tbl_name == 'manager':
+        
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
+            self.input3 = QLineEdit()
+            self.input3.setPlaceholderText(next(gen))
+            self.input4 = QLineEdit()
+            self.input4.setPlaceholderText(next(gen))
+            self.input5 = QLineEdit()
+            self.input5.setPlaceholderText(next(gen))
+            self.input6 = QLineEdit()
+            self.input6.setPlaceholderText(next(gen))
+            # layout.addWidget(self.input1)  
+            layout.addWidget(self.input2) 
+            layout.addWidget(self.input3) 
+            layout.addWidget(self.input4) 
+            layout.addWidget(self.input5) 
+            layout.addWidget(self.input6) 
+
+            
+        elif self.tbl_name == 'teachers':
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
+            self.input3 = QLineEdit()
+            self.input3.setPlaceholderText(next(gen))
+            self.input4 = QLineEdit()
+            self.input4.setPlaceholderText(next(gen))
+            self.input5 = QLineEdit()
+            self.input5.setPlaceholderText(next(gen))
+            
+            # layout.addWidget(self.input1)  
+            layout.addWidget(self.input2) 
+            layout.addWidget(self.input3) 
+            layout.addWidget(self.input4) 
+            layout.addWidget(self.input5) 
+             
+            
+        elif self.tbl_name == 'courses':
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
+            self.input3 = QLineEdit()
+            self.input3.setPlaceholderText(next(gen))
+            self.input4 = QLineEdit()
+            self.input4.setPlaceholderText(next(gen))
+            self.input5 = QLineEdit()
+            self.input5.setPlaceholderText(next(gen))
+            self.input6 = QLineEdit()
+            self.input6.setPlaceholderText(next(gen))
+            # layout.addWidget(self.input1)  
+            layout.addWidget(self.input2) 
+            layout.addWidget(self.input3) 
+            layout.addWidget(self.input4) 
+            layout.addWidget(self.input5) 
+            layout.addWidget(self.input6) 
+
+        elif self.tbl_name == 'subject_area':
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            
+            # layout.addWidget(self.input1)  
+            layout.addWidget(self.input2) 
+            
+        elif self.tbl_name == 'progress':
+            self.input1 = QLineEdit()
+            self.input1.setPlaceholderText(next(gen))
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
+            self.input3 = QLineEdit()
+            self.input3.setPlaceholderText(next(gen))
+            self.input4 = QLineEdit()
+            self.input4.setPlaceholderText(next(gen))
+            self.input5 = QLineEdit()
+            self.input5.setPlaceholderText(next(gen))
+            
+            
+            layout.addWidget(self.input2) 
+            layout.addWidget(self.input3) 
+            layout.addWidget(self.input4) 
+            layout.addWidget(self.input5) 
+
+            
         
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
-
+    def get_column(self):
+        for col in self.columns:
+            yield str(col)
     def add(self):
-
-        # name = ""
-        # branch = ""
-        # sem = -1
-        # mobile = -1
-        # address = ""
-
-        # name = self.nameinput.text()
-        # branch = self.branchinput.itemText(self.branchinput.currentIndex())
-        # sem = self.seminput.itemText(self.seminput.currentIndex())
-        # mobile = self.mobileinput.text()
-        # address = self.addressinput.text()
+        self.insert_values.append(self.input2.text())
+        self.insert_values.append(self.input3.text())
+        
+        if self.tbl_name != 'subject_area':
+                self.insert_values.append(self.input4.text())
+                self.insert_values.append(self.input5.text())
+                
+        if (self.tbl_name == 'manager' or self.tbl_name == 'progress'):
+            self.insert_values.append(self.input6.text())
 
         
-        
-        self.values = []
-        for items in self.columns[1:] :
-            name = str(self.nameinput.objectName())[5:]
-            print(name)
-            
-            self.values.append(self.nameinput.text())
-
         try:
 
-            # self.conn = sqlite3.connect("database.db")
-            # self.c = self.conn.cursor()
-            # self.c.execute("INSERT INTO students (name,branch,sem,Mobile,address) VALUES (?,?,?,?,?)",(name,branch,sem,mobile,address))
-            # self.conn.commit()
-            # self.c.close()
-            # self.conn.close()
             server = Server()
-            server.INSERT(self.tbl_name, self.columns, self.values)
+
+            server.INSERT(self.tbl_name, self.columns, self.insert_values)
             
             server.exit()
 
