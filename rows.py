@@ -9,6 +9,8 @@ import os
 from about_tables import table_info
 from posgre_server import Server
 
+
+
 class InsertDialog(QDialog):
     def __init__(self,tbl_name = 'students', columns = [], isAdmin = None):
         super(InsertDialog, self).__init__( )
@@ -194,8 +196,10 @@ class InsertDialog(QDialog):
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
 
 class SearchDialog(QDialog):
-    def __init__(self, tbl_name = 'students', columns = [] ):
+    def __init__(self, tbl_name = 'manager', columns = [] ):
         super(SearchDialog, self).__init__( )
+
+        self.tbl_name = tbl_name
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Search")
@@ -229,16 +233,16 @@ class SearchDialog(QDialog):
             self.c.close()
             self.conn.close()
         except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not Find student from the database.')
+            QMessageBox.warning(QMessageBox(), 'Error', f'Could not Find {self.tbl_name } from the database.')
 
 class DeleteDialog(QDialog):
-    def __init__(self,tbl_name = 'students', columns = []  ):
+    def __init__(self,tbl_name = 'manager', columns = []  ):
         super(DeleteDialog, self).__init__( )
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Delete")
 
-        self.setWindowTitle("Delete Student")
+        self.setWindowTitle("Delete")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
         self.QBtn.clicked.connect(self.delete)
@@ -267,9 +271,6 @@ class DeleteDialog(QDialog):
             self.close()
         except Exception:
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete student from the database.')
-
-
-
 
 class AboutDialog(QDialog):
     def __init__(self):
@@ -306,10 +307,12 @@ class AboutDialog(QDialog):
 
         self.setLayout(layout)
 
-
-
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'manager'):
+    def __init__(self, tbl_name = 'courses', isAdmin = None):
+        self.isAdmin=isAdmin
+        if isAdmin == None:
+            self.isAdmin=True # сейчас стоит админ! не забыть поменять
+        
         super(PushedTable, self).__init__( )
         
         #запомнили название таблицы
@@ -317,9 +320,11 @@ class PushedTable(QMainWindow):
         self.columns = table_info[tbl_name]['columns']
 
         file_menu = self.menuBar().addMenu("&File")
-
+        #если есть связанные таблицы, добавим соответствующее поле
+        if (len(table_info[self.tbl_name]['fkey'])!= 0):
+            fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
         help_menu = self.menuBar().addMenu("&About")
-        self.setWindowTitle("Панель управления")
+        self.setWindowTitle(f"Таблица '{self.tbl_name}'")
 
         self.setMinimumSize(800, 600)
 
@@ -341,11 +346,11 @@ class PushedTable(QMainWindow):
 
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
-
-        btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add ", self)
-        btn_ac_adduser.triggered.connect(self.insert)
-        btn_ac_adduser.setStatusTip("Add ")
-        toolbar.addAction(btn_ac_adduser)
+        if (self.isAdmin==True):
+            btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add ", self)
+            btn_ac_adduser.triggered.connect(self.insert)
+            btn_ac_adduser.setStatusTip("Add")
+            toolbar.addAction(btn_ac_adduser)
 
         btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
         btn_ac_refresh.triggered.connect(self.loaddata)
@@ -357,42 +362,74 @@ class PushedTable(QMainWindow):
         btn_ac_search.setStatusTip("Search")
         toolbar.addAction(btn_ac_search)
 
-        btn_ac_delete = QAction(QIcon("icon/trash.png"), "Delete", self)
-        btn_ac_delete.triggered.connect(self.delete)
-        btn_ac_delete.setStatusTip("Delete")
-        toolbar.addAction(btn_ac_delete)
+        if (self.isAdmin==True):
+            btn_ac_delete = QAction(QIcon("icon/delete.png"), "Delete", self)
+            btn_ac_delete.triggered.connect(self.delete)
+            btn_ac_delete.setStatusTip("Delete")
+            toolbar.addAction(btn_ac_delete)
 
-        adduser_action = QAction(QIcon("icon/add.png"),"Insert", self)
-        adduser_action.triggered.connect(self.insert)
-        file_menu.addAction(adduser_action)
+        #Это кнопки на панели управления
+        if (self.isAdmin==True):
+            adduser_action = QAction(QIcon(" "),"Insert", self)
+            adduser_action.triggered.connect(self.insert)
+            file_menu.addAction(adduser_action)
+        #здесь я добавляю кнопки на переход на связанные таблицы
+        if (self.isAdmin==True):
+            
+            self.fkey_table = table_info[self.tbl_name]['fkey'] 
+            #надо добавить кнопки на все таблицы
+            if len(table_info[self.tbl_name]['fkey']) == 1:
+                watch_fkey_action = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
+                data = str(table_info[self.tbl_name]['fkey'][0])
+                if type(data)!=None:
+                    watch_fkey_action.triggered.connect(lambda: self.fkey_open(data))
 
-        searchuser_action = QAction(QIcon("icon/search.png"), "Search", self)
-        searchuser_action.triggered.connect(self.search)
-        file_menu.addAction(searchuser_action)
+                fkey_menu.addAction(watch_fkey_action)
 
-        deluser_action = QAction(QIcon("icon/trash.png"), "Delete", self)
-        deluser_action.triggered.connect(self.delete)
-        file_menu.addAction(deluser_action)
+            if len(table_info[self.tbl_name]['fkey'] )== 2:
+                watch_fkey_action1 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
+                data1 = str(table_info[self.tbl_name]['fkey'][0])
+                if type(data1)!=None:
+                    watch_fkey_action1.triggered.connect(lambda: self.fkey_open(data1))
+                    
+
+                watch_fkey_action2 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][1]), self)
+                data2 = str(table_info[self.tbl_name]['fkey'][1])
+                if type(data2)!=None:
+                    watch_fkey_action2.triggered.connect(lambda: self.fkey_open(data2))
+
+                fkey_menu.addAction(watch_fkey_action1)
+                fkey_menu.addAction(watch_fkey_action2)
+
+        # searchuser_action = QAction(QIcon("icon/search.png"), "Search", self)
+        # searchuser_action.triggered.connect(self.search)
+        # file_menu.addAction(searchuser_action)
+        if (self.isAdmin==True):
+            deluser_action = QAction(QIcon("icon/trash.png"), "Delete", self)
+            deluser_action.triggered.connect(self.delete)
+            file_menu.addAction(deluser_action)
 
 
-        about_action = QAction(QIcon("icon/info.png"),"Developer", self)
-        about_action.triggered.connect(self.about)
-        help_menu.addAction(about_action)
+        if (self.isAdmin==False):
+            about_action = QAction(QIcon("icon/info.png"),"Developer", self)
+            about_action.triggered.connect(self.about)
+            help_menu.addAction(about_action)
 
+        
+    #@staticmethod
     def loaddata(self):
-        # self.connection = sqlite3.connect("database.db")
-        # query = "SELECT * FROM students"
-        # result = self.connection.execute(query)
+        
         #создали соединение
-        self.server = Server()
+        server = Server()
         #взяли данные из таблицы
-        table_data = self.server.SELECT(self.tbl_name) 
+        table_data = server.SELECT(self.tbl_name) 
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
             for column_number, data in enumerate(row_data):
                 self.tableWidget.setItem(row_number, column_number,QTableWidgetItem(str(data)))
-        # self.connection.close()
+
+        server.exit()
 
     def handlePaintRequest(self, printer):
         document = QTextDocument()
@@ -405,6 +442,37 @@ class PushedTable(QMainWindow):
                 cursor.insertText(model.item(row, column).text())
                 cursor.movePosition(QTextCursor.NextCell)
         document.print_(printer)
+    
+    #для админа добавим просмотр связанных таблиц
+    @pyqtSlot()
+    def fkey_open(self,fkey_table_name):
+        
+        # dlg = FkeyDialog(fkey_table_name, self.columns) 
+        # # dlg.exec_()
+        # dlg.show()
+        self.tableWidget1 = QTableWidget()
+        self.setCentralWidget(self.tableWidget1)
+        self.tableWidget1.setAlternatingRowColors(True)
+        self.tableWidget1.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
+        self.tableWidget1.horizontalHeader().setCascadingSectionResizes(False)
+        self.tableWidget1.horizontalHeader().setSortIndicatorShown(False)
+        self.tableWidget1.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget1.verticalHeader().setVisible(False)
+        self.tableWidget1.verticalHeader().setCascadingSectionResizes(False)
+        self.tableWidget1.verticalHeader().setStretchLastSection(False)
+        self.tableWidget1.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns']) #указываем названия колонок
+
+        #создали соединение
+        server = Server()
+        #взяли данные из таблицы
+        table_data = server.SELECT(fkey_table_name) 
+        self.tableWidget1.setRowCount(0)
+        for row_number, row_data in enumerate(table_data):
+            self.tableWidget1.insertRow(row_number)
+            for column_number, data in enumerate(row_data):
+                self.tableWidget1.setItem(row_number, column_number,QTableWidgetItem(str(data)))
+
+        server.exit()
 
     def insert(self):
         dlg = InsertDialog(self.tbl_name, self.columns)

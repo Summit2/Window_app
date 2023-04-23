@@ -42,7 +42,7 @@ class All_tables(QWidget):
         sending_button = self.sender()
         
         button_name = sending_button.objectName()
-        print(button_name[7:])
+        # print(button_name[7:])
         # self.table = Table(None, button_name[7:])
         self.window = PushedTable(button_name[7:])
         self.window.show()
