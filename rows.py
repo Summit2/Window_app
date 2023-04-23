@@ -311,18 +311,18 @@ class PushedTable(QMainWindow):
     def __init__(self, tbl_name = 'courses', isAdmin = None):
         self.isAdmin=isAdmin
         if isAdmin == None:
-            self.isAdmin=True # сейчас стоит админ! не забыть поменять
+            self.isAdmin=True 
         
         super(PushedTable, self).__init__( )
-        
+        self.back_button_counter = 0
         #запомнили название таблицы
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
-
-        file_menu = self.menuBar().addMenu("&File")
+        if self.isAdmin==True:
+            file_menu = self.menuBar().addMenu("&File")
         #если есть связанные таблицы, добавим соответствующее поле
-        if (len(table_info[self.tbl_name]['fkey'])!= 0):
-            fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
+            if (len(table_info[self.tbl_name]['fkey'])!= 0):
+                fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"Таблица '{self.tbl_name}'")
 
@@ -340,9 +340,9 @@ class PushedTable(QMainWindow):
         self.tableWidget.verticalHeader().setStretchLastSection(False)
         self.tableWidget.setHorizontalHeaderLabels(self.columns) #указываем названия колонок
 
-        toolbar = QToolBar()
-        toolbar.setMovable(False)
-        self.addToolBar(toolbar)
+        self.toolbar = QToolBar()
+        self.toolbar.setMovable(False)
+        self.addToolBar(self.toolbar)
 
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
@@ -350,23 +350,23 @@ class PushedTable(QMainWindow):
             btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add ", self)
             btn_ac_adduser.triggered.connect(self.insert)
             btn_ac_adduser.setStatusTip("Add")
-            toolbar.addAction(btn_ac_adduser)
+            self.toolbar.addAction(btn_ac_adduser)
 
         btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
         btn_ac_refresh.triggered.connect(self.loaddata)
         btn_ac_refresh.setStatusTip("Refresh")
-        toolbar.addAction(btn_ac_refresh)
+        self.toolbar.addAction(btn_ac_refresh)
 
         btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
         btn_ac_search.triggered.connect(self.search)
         btn_ac_search.setStatusTip("Search")
-        toolbar.addAction(btn_ac_search)
+        self.toolbar.addAction(btn_ac_search)
 
         if (self.isAdmin==True):
             btn_ac_delete = QAction(QIcon("icon/delete.png"), "Delete", self)
             btn_ac_delete.triggered.connect(self.delete)
             btn_ac_delete.setStatusTip("Delete")
-            toolbar.addAction(btn_ac_delete)
+            self.toolbar.addAction(btn_ac_delete)
 
         #Это кнопки на панели управления
         if (self.isAdmin==True):
@@ -430,6 +430,7 @@ class PushedTable(QMainWindow):
                 self.tableWidget.setItem(row_number, column_number,QTableWidgetItem(str(data)))
 
         server.exit()
+        
 
     def handlePaintRequest(self, printer):
         document = QTextDocument()
@@ -473,7 +474,23 @@ class PushedTable(QMainWindow):
                 self.tableWidget1.setItem(row_number, column_number,QTableWidgetItem(str(data)))
 
         server.exit()
+        # self.tableWidget.hide()
+        self.tableWidget1.show()
 
+        
+        self.btn_back = QAction(QIcon("icon/back.png"), "Back", self)
+        self.btn_back.triggered.connect(self.back)
+        self.btn_back.setStatusTip("Back")
+        if self.back_button_counter==0:
+            self.toolbar.addAction(self.btn_back)
+        self.back_button_counter+=1
+        #self.btn_back.triggered.connect(self.back)
+
+    def back(self):
+
+        #self.btn_back
+        self.tableWidget.setVisible(True)
+        self.tableWidget1.hide()
     def insert(self):
         dlg = InsertDialog(self.tbl_name, self.columns)
         dlg.exec_()

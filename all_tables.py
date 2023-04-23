@@ -44,10 +44,10 @@ class All_tables(QWidget):
         button_name = sending_button.objectName()
         # print(button_name[7:])
         # self.table = Table(None, button_name[7:])
-        self.window = PushedTable(button_name[7:])
+        self.window = PushedTable(button_name[7:],self.isAdmin)
         self.window.show()
         self.window.loaddata()
-        # self.table.show()
+        #self.table.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -60,6 +60,7 @@ if __name__ == '__main__':
     if (passdlg.exec_() == QDialog.Accepted):
         
         window.isAdmin = passdlg.isAdmin
+        print(window.isAdmin )
         window.show()
         
     sys.exit(app.exec())
