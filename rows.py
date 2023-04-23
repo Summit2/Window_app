@@ -448,53 +448,28 @@ class PushedTable(QMainWindow):
     @pyqtSlot()
     def fkey_open(self,fkey_table_name):
         
-        # dlg = FkeyDialog(fkey_table_name, self.columns) 
-        # # dlg.exec_()
-        # dlg.show()
-        self.tableWidget1 = QTableWidget()
-        self.setCentralWidget(self.tableWidget1)
-        self.tableWidget1.setAlternatingRowColors(True)
-        self.tableWidget1.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
-        self.tableWidget1.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget1.horizontalHeader().setSortIndicatorShown(False)
-        self.tableWidget1.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget1.verticalHeader().setVisible(False)
-        self.tableWidget1.verticalHeader().setCascadingSectionResizes(False)
-        self.tableWidget1.verticalHeader().setStretchLastSection(False)
-        self.tableWidget1.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns']) #указываем названия колонок
-
-        #создали соединение
-        server = Server()
-        #взяли данные из таблицы
-        table_data = server.SELECT(fkey_table_name) 
-        self.tableWidget1.setRowCount(0)
-        for row_number, row_data in enumerate(table_data):
-            self.tableWidget1.insertRow(row_number)
-            for column_number, data in enumerate(row_data):
-                self.tableWidget1.setItem(row_number, column_number,QTableWidgetItem(str(data)))
-
-        server.exit()
-        # self.tableWidget.hide()
-        self.tableWidget1.show()
-
         
-        self.btn_back = QAction(QIcon("icon/back.png"), "Back", self)
-        self.btn_back.triggered.connect(self.back)
-        self.btn_back.setStatusTip("Back")
-        if self.back_button_counter==0:
-            self.toolbar.addAction(self.btn_back)
-        self.back_button_counter+=1
-        #self.btn_back.triggered.connect(self.back)
 
+        self.w = Table(fkey_table_name)
+
+        # self.btn_back = QAction(QIcon("icon/back.png"), "Back", self)
+        # self.btn_back.triggered.connect(self.back)
+        # self.btn_back.setStatusTip("Back")
+        # if self.back_button_counter==0:
+        #     self.toolbar.addAction(self.btn_back)
+        # self.back_button_counter+=1
+        #self.btn_back.triggered.connect(self.back)
+        self.w.show()
     def back(self):
 
         #self.btn_back
-        self.tableWidget.setVisible(True)
-        self.tableWidget1.hide()
+        
+        
+        self.w.hide()
     def insert(self):
         dlg = InsertDialog(self.tbl_name, self.columns)
         dlg.exec_()
-
+    
     def delete(self):
         dlg = DeleteDialog(self.tbl_name, self.columns)
         dlg.exec_()
@@ -506,6 +481,43 @@ class PushedTable(QMainWindow):
     def about(self):
         dlg = AboutDialog()
         dlg.exec_()
+
+class Table(QTableWidget):
+    def __init__(self, tbl_name):
+        super().__init__()
+
+       
+
+    
+        
+        # dlg = FkeyDialog(fkey_table_name, self.columns) 
+        # # dlg.exec_()
+        # dlg.show()
+        
+        fkey_table_name =tbl_name
+        self.setAlternatingRowColors(True)
+        self.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
+        self.horizontalHeader().setCascadingSectionResizes(False)
+        self.horizontalHeader().setSortIndicatorShown(False)
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().setVisible(False)
+        self.verticalHeader().setCascadingSectionResizes(False)
+        self.verticalHeader().setStretchLastSection(False)
+        self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns']) #указываем названия колонок
+
+        #создали соединение
+        server = Server()
+        #взяли данные из таблицы
+        table_data = server.SELECT(fkey_table_name) 
+        self.setRowCount(0)
+        for row_number, row_data in enumerate(table_data):
+            self.insertRow(row_number)
+            for column_number, data in enumerate(row_data):
+                self.setItem(row_number, column_number,QTableWidgetItem(str(data)))
+
+        server.exit()
+        
+        
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
