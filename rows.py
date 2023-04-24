@@ -323,27 +323,58 @@ class PushedTable(QMainWindow):
         #запомнили название таблицы
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
+
+        #добавили графу связанные таблицы
         if self.isAdmin==True:
             file_menu = self.menuBar().addMenu("&File")
         #если есть связанные таблицы, добавим соответствующее поле
             if (len(table_info[self.tbl_name]['fkey'])!= 0):
                 fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
+
+        # добавим отчеты для обычных пользователей
+        if (self.isAdmin==False):
+            report_menu = self.menuBar().addMenu("&Отчеты")
+        
+
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"Таблица '{self.tbl_name}'")
         
         self.setMinimumSize(800, 600)
 
-        self.tableWidget = QTableWidget()
-        self.setCentralWidget(self.tableWidget)
-        self.tableWidget.setAlternatingRowColors(True)
-        self.tableWidget.setColumnCount(len(self.columns)) #указываем количество колонок
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.verticalHeader().setStretchLastSection(False)
-        self.tableWidget.setHorizontalHeaderLabels(self.columns) #указываем названия колонок
+        #добавляем вывод таблиц если просмотра:
+        if (1):
+            self.tableWidget = QTableWidget()
+            self.setCentralWidget(self.tableWidget)
+            self.tableWidget.setAlternatingRowColors(True)
+            
+            self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+            self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
+            self.tableWidget.horizontalHeader().setStretchLastSection(True)
+            self.tableWidget.verticalHeader().setVisible(False)
+            self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
+            self.tableWidget.verticalHeader().setStretchLastSection(False)
+            if (self.isAdmin==True):
+                self.tableWidget.setColumnCount(len(self.columns)) #указываем количество колонок
+                self.tableWidget.setHorizontalHeaderLabels(self.columns) #указываем названия колонок
+            if self.isAdmin ==False:
+                 self.tableWidget.setColumnCount(2)
+                 if self.tbl_name =='manager':
+                    self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
+                 elif self.tbl_name =='students':
+                    self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
+                 elif self.tbl_name =='teachers':
+                     self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
+
+
+        # #добавляем отчеты для обычных пользователей
+        # if(self.isAdmin ==False):
+        #     self.widget_layout = QVBoxLayout()
+           
+        #     text = QLabel("Пользователь имеет возможность просматривать отчеты:\n")
+        #     self.widget_layout.addWidget(text)
+        #     self.setCentralWidget(self.widget_layout)
+
+
 
         self.toolbar = QToolBar()
         self.toolbar.setMovable(False)
@@ -356,11 +387,11 @@ class PushedTable(QMainWindow):
             btn_ac_adduser.triggered.connect(self.insert)
             btn_ac_adduser.setStatusTip("Add")
             self.toolbar.addAction(btn_ac_adduser)
-
-        btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
-        btn_ac_refresh.triggered.connect(self.loaddata)
-        btn_ac_refresh.setStatusTip("Refresh")
-        self.toolbar.addAction(btn_ac_refresh)
+        if (self.isAdmin==True):
+            btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
+            btn_ac_refresh.triggered.connect(self.loaddata)
+            btn_ac_refresh.setStatusTip("Refresh")
+            self.toolbar.addAction(btn_ac_refresh)
 
         # btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
         # btn_ac_search.triggered.connect(self.search)
@@ -421,13 +452,13 @@ class PushedTable(QMainWindow):
             help_menu.addAction(about_action)
 
         
-    #@staticmethod
+    
     def loaddata(self):
         
         #создали соединение
         server = Server()
         #взяли данные из таблицы
-        table_data = server.SELECT(self.tbl_name) 
+        table_data = server.SELECT(self.tbl_name, self.isAdmin) 
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
@@ -456,14 +487,6 @@ class PushedTable(QMainWindow):
         
 
         self.w = Table(fkey_table_name)
-
-        # self.btn_back = QAction(QIcon("icon/back.png"), "Back", self)
-        # self.btn_back.triggered.connect(self.back)
-        # self.btn_back.setStatusTip("Back")
-        # if self.back_button_counter==0:
-        #     self.toolbar.addAction(self.btn_back)
-        # self.back_button_counter+=1
-        #self.btn_back.triggered.connect(self.back)
         self.w.show()
     def back(self):
 

@@ -30,12 +30,20 @@ class Server:
         self.cur.execute(f'INSERT INTO {tbl_name} ({col}) values ({v});')
     def UPDATE(self,name = ''):
             pass
-    def SELECT(self, tbl_name = ''):
+    def SELECT(self, tbl_name = '', isAdmin = True):
         '''
         возвращает массив строк переданной таблицы
         '''
+        if not isAdmin and (tbl_name =='manager' or tbl_name == 'students' or tbl_name == 'teachers'):
+             if tbl_name =='manager':
+                  self.cur.execute(f"SELECT full_name as ФИО, email FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
+             elif tbl_name =='students':
+                  self.cur.execute(f"SELECT fio as ФИО, email FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
+             elif tbl_name =='teachers':
+                  self.cur.execute(f"SELECT fio as ФИО, email FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
          # Execute a query
-        self.cur.execute(f"SELECT * FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
+        else:
+            self.cur.execute(f"SELECT * FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
 
         # Retrieve query results
         records = self.cur.fetchall()

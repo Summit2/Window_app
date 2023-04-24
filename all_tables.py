@@ -44,6 +44,7 @@ class All_tables(QWidget):
         # self.table = Table(None, button_name[7:])
         self.window = PushedTable(button_name[7:],self.isAdmin)
         self.window.show()
+        
         self.window.loaddata()
         #self.table.show()
 
