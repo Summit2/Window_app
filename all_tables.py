@@ -51,15 +51,21 @@ class All_tables(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    window = All_tables()
+    admin_window = All_tables()
     passdlg = AuthDialog()
     passdlg.show()
     
-    
+    user_window = PushedTable()
     if (passdlg.exec_() == QDialog.Accepted):
         
-        window.isAdmin = passdlg.isAdmin
+        admin_window.isAdmin = passdlg.isAdmin
         # print(window.isAdmin )
-        window.show()
+        # if admin_window.isAdmin == True:
+        admin_window.show()
+            
+        # else:
+        #     user_window.show()
+        #     user_window.loaddata()
+
         
     sys.exit(app.exec())

@@ -313,7 +313,7 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'courses', isAdmin = None):
+    def __init__(self, tbl_name = 'courses', isAdmin = 0):
         self.isAdmin=isAdmin
         if isAdmin == None:
             self.isAdmin=True 
@@ -331,10 +331,10 @@ class PushedTable(QMainWindow):
             if (len(table_info[self.tbl_name]['fkey'])!= 0):
                 fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
 
-        # добавим отчеты для обычных пользователей
-        if (self.isAdmin==False):
-            report_menu = self.menuBar().addMenu("&Отчеты")
         
+        if (self.isAdmin==False):
+            self.report_menu = self.menuBar().addMenu("&Отчеты")
+            print("Добавили")
 
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"Таблица '{self.tbl_name}'")
@@ -367,9 +367,64 @@ class PushedTable(QMainWindow):
 
 
         # #добавляем отчеты для обычных пользователей
+      
+        if (self.isAdmin==False):
+            
+            self.reports = []
+            #надо добавить кнопки на все таблицы
+            
+            #отчет на всех студентов
+            self.reports.append( ("Все студенты"))
+            report_all_students = QAction(QIcon(" "), "Все студенты", self)
+            report_all_students.triggered.connect(lambda: self.get_report(0))
+            self.report_menu.addAction(report_all_students)
+
+            self.reports.append( "Цена курсов")
+            report_price = QAction(QIcon(" "), "Цена курсов", self)
+            report_price.triggered.connect(lambda: self.get_report(1))
+            self.report_menu.addAction(report_price)
+
+            self.reports.append( "Контакты преподавателей")
+            report_teachers_contacts = QAction(QIcon(" "), "Контакты преподавателей", self)
+            report_teachers_contacts.triggered.connect(lambda: self.get_report(2))
+            self.report_menu.addAction(report_teachers_contacts)
+
+            self.reports.append( "Рейтинг курсов")
+            report_rating = QAction(QIcon(" "), "Рейтинг курсов", self)
+            report_rating.triggered.connect(lambda: self.get_report(3))
+            self.report_menu.addAction(report_rating)
+
+            #отчет на пройденные курсы
+            # self.reports.append( "Пройденные курсы")
+            # report_courses_completed = QAction(QIcon(" "), "Пройденные курсы", self)
+            # report_courses_completed.triggered.connect(lambda: self.get_report(3))
+            # self.report_menu.addAction(report_courses_completed)
+
+
+
+            # elif (self.tbl_name == 'manager'):
+            #     self.reports = []
+            #     report1 = QAction(QIcon(" "), "Пройденные курсы", self)
+            #     report1.triggered.connect(self.get_report)
+            #     self.report_menu.addAction(report1)
+
+            # elif (self.tbl_name == 'teachers'):
+            #     self.reports = []
+            #     report1 = QAction(QIcon(" "), "Пройденные курсы", self)
+            #     report1.triggered.connect(self.get_report)
+            #     self.report_menu.addAction(report1)
+            # elif (self.tbl_name == 'courses'):
+            #     self.reports = []
+            #     report1 = QAction(QIcon(" "), "Пройденные курсы", self)
+            #     report1.triggered.connect(self.get_report)
+            #     self.report_menu.addAction(report1)
+            # elif (self.tbl_name == 'subject_area'):
+            #     self.reports = []
+            #     report1 = QAction(QIcon(" "), "Пройденные курсы", self)
+            #     report1.triggered.connect(self.get_report)
+            #     self.report_menu.addAction(report1)
         # if(self.isAdmin ==False):
         #     self.widget_layout = QVBoxLayout()
-           
         #     text = QLabel("Пользователь имеет возможность просматривать отчеты:\n")
         #     self.widget_layout.addWidget(text)
         #     self.setCentralWidget(self.widget_layout)
@@ -392,11 +447,6 @@ class PushedTable(QMainWindow):
             btn_ac_refresh.triggered.connect(self.loaddata)
             btn_ac_refresh.setStatusTip("Refresh")
             self.toolbar.addAction(btn_ac_refresh)
-
-        # btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
-        # btn_ac_search.triggered.connect(self.search)
-        # btn_ac_search.setStatusTip("Search")
-        # self.toolbar.addAction(btn_ac_search)
 
         if (self.isAdmin==True):
             btn_ac_delete = QAction(QIcon("icon/delete.png"), "Delete", self)
@@ -422,7 +472,7 @@ class PushedTable(QMainWindow):
 
                 fkey_menu.addAction(watch_fkey_action)
 
-            if len(table_info[self.tbl_name]['fkey'] )== 2:
+            if len(table_info[self.tbl_name]['fkey'] ) == 2:
                 watch_fkey_action1 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
                 data1 = str(table_info[self.tbl_name]['fkey'][0])
                 if type(data1)!=None:
@@ -451,8 +501,28 @@ class PushedTable(QMainWindow):
             about_action.triggered.connect(self.about)
             help_menu.addAction(about_action)
 
+    #для пользователей просмотр отчетов
+    def get_report(self, index):
         
-    
+        # print(self.reports[index])
+        self.to_get_report = Server()
+        
+        if index == 0:
+            
+            # print(data)
+
+            self.report_table = Table('students',['ФИО'],'select fio from students group by fio;')
+            
+        elif index == 1:
+            self.report_table = Table('courses', ['Название','Цена (руб)'],'select course_name as Название, sum(price) as Название from courses group by course_name;')
+
+        elif index ==2:
+            self.report_table = Table('teachers', ['Имя', 'Почта'] ,'select fio, email from teachers;')
+        elif index ==3:
+            self.report_table = Table(None, ['Название','Оценка по пятибальной шкале'], '''select course_name , round(sum(cast(score as numeric ))/count(score),2)  from courses 
+	inner join progress on progress.id_course =  courses.id_course
+		group by course_name;''')
+        self.report_table.show()   
     def loaddata(self):
         
         #создали соединение
@@ -479,6 +549,7 @@ class PushedTable(QMainWindow):
                 cursor.insertText(model.item(row, column).text())
                 cursor.movePosition(QTextCursor.NextCell)
         document.print_(printer)
+    
     
     #для админа добавим просмотр связанных таблиц
     @pyqtSlot()
@@ -511,7 +582,7 @@ class PushedTable(QMainWindow):
         dlg.exec_()
 
 class Table(QTableWidget):
-    def __init__(self, tbl_name):
+    def __init__(self, tbl_name = None ,columns = None, SELECT = None):
         super().__init__()
 
        
@@ -522,27 +593,47 @@ class Table(QTableWidget):
         # # dlg.exec_()
         # dlg.show()
         
+        self.setWindowTitle(" ")
+        self.setMinimumSize(800, 600)
         fkey_table_name =tbl_name
+        self.columns = columns
         self.setAlternatingRowColors(True)
-        self.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
+        if columns == None:
+            self.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
+        else:
+            self.setColumnCount(len(self.columns))
         self.horizontalHeader().setCascadingSectionResizes(False)
         self.horizontalHeader().setSortIndicatorShown(False)
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().setVisible(False)
         self.verticalHeader().setCascadingSectionResizes(False)
         self.verticalHeader().setStretchLastSection(False)
-        self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns']) #указываем названия колонок
+        if columns == None:
+            self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns'])#указываем названия колонок
+        else:
+            self.setHorizontalHeaderLabels(self.columns)
 
         #создали соединение
         server = Server()
-        #взяли данные из таблицы
-        table_data = server.SELECT(fkey_table_name) 
+        if SELECT==None:
+            #взяли данные из таблицы
+            table_data = server.SELECT(fkey_table_name) 
+            
+        else:
+            
+            self.to_get_report = Server()
+        
+        
+            self.to_get_report.cur.execute(f'{SELECT}')
+
+            #запоминаем информацию с селекта
+            table_data = self.to_get_report.cur.fetchall()
+            
         self.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.insertRow(row_number)
             for column_number, data in enumerate(row_data):
                 self.setItem(row_number, column_number,QTableWidgetItem(str(data)))
-
         server.exit()
         
         
