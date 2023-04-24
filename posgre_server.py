@@ -26,7 +26,7 @@ class Server:
         v = ','.join(values)
 
         print(f'INSERT INTO {tbl_name} ({col}) values ({v});')
-        print(values)
+        # print(values)
         self.cur.execute(f'INSERT INTO {tbl_name} ({col}) values ({v});')
     def UPDATE(self,name = ''):
             pass
@@ -47,7 +47,7 @@ class Server:
                 
 if __name__ == '__main__':
         test = Server()
-        print(test.SELECT('manager'))
-        test.INSERT('manager',None,['223', '32233223', '2322', "'sokol@mail.ru'", '2'])
-        print(test.SELECT('manager'))
+        print(test.SELECT('courses'))
+        test.INSERT('courses',('course_ngame','price','duration','id_area','id_teacher'),("'Perfect English'",'10000','54','1','1'))
+        print(test.SELECT('courses'))
         test.exit()

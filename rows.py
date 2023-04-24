@@ -159,11 +159,13 @@ class InsertDialog(QDialog):
             self.insert_values.append(f"'{self.input3.text()}'")
             self.insert_values.append(f"'{self.input4.text()}'")
             self.insert_values.append(f"'{self.input5.text()}'")
+            # self.insert_values.append(f"'{self.input6.text()}'")
         elif self.tbl_name == 'courses':
             self.insert_values.append(f"'{self.input2.text()}'")
             self.insert_values.append(self.input3.text())
             self.insert_values.append(self.input4.text())
             self.insert_values.append(self.input5.text())
+            self.insert_values.append(self.input6.text())
         elif self.tbl_name == 'subject_area':
             self.insert_values.append(f"'{self.input2.text()}'")
         elif self.tbl_name == 'manager':
@@ -179,7 +181,7 @@ class InsertDialog(QDialog):
             self.insert_values.append(f"'{self.input5.text()}'")
             self.insert_values.append(self.input6.text()) 
 
-        print(self.insert_values)
+        # print(self.insert_values)
         try:
 
             server = Server()

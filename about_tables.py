@@ -42,6 +42,3 @@ table_info ={
 def get_column(column):
         for col in column:
             yield col
-g = get_column( ['id_progress','id_student','id_course','is_complete','score'])
-for _ in range(0, len( ['id_progress','id_student','id_course','is_complete','score'])):
-    print(next(g))

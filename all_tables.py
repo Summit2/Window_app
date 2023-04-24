@@ -60,7 +60,7 @@ if __name__ == '__main__':
     if (passdlg.exec_() == QDialog.Accepted):
         
         window.isAdmin = passdlg.isAdmin
-        print(window.isAdmin )
+        # print(window.isAdmin )
         window.show()
         
     sys.exit(app.exec())
