@@ -474,7 +474,7 @@ class PushedTable(QMainWindow):
             self.tableWidget.verticalHeader().setStretchLastSection(False)
             if (self.isAdmin==True):
                 self.tableWidget.setColumnCount(len(self.columns)) #указываем количество колонок
-                self.tableWidget.setHorizontalHeaderLabels(self.columns) #указываем названия колонок
+                self.tableWidget.setHorizontalHeaderLabels(table_info[self.tbl_name]['columns_rus']) #указываем названия колонок
             if self.isAdmin ==False:
                  self.tableWidget.setColumnCount(2)
                  if self.tbl_name =='manager':
@@ -704,7 +704,7 @@ class Table(QTableWidget):
         self.verticalHeader().setCascadingSectionResizes(False)
         self.verticalHeader().setStretchLastSection(False)
         if columns == None:
-            self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns'])#указываем названия колонок
+            self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns_rus'])#указываем названия колонок
         else:
             self.setHorizontalHeaderLabels(self.columns)
 
@@ -723,7 +723,30 @@ class Table(QTableWidget):
 
             #запоминаем информацию с селекта
             table_data = self.to_get_report.cur.fetchall()
-            
+            # print(table_data)
+        # student_data = temp.cur.fetchall()
+        # print(student_data)
+        print(table_data)
+        if fkey_table_name == 'progress':
+            for i in range(len(table_data)):
+                temp = Server()
+                temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                table_data[i][1] = temp_data
+                temp.exit()
+
+                temp = Server()
+                temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                # print(table_data[i][2])
+                table_data[i][2] = temp_data
+                temp.exit()
+                # table_data[i][1] = list(table_data[i][1])
+                # table_data[i][1] = temp.cur.fetchall()[0][0]
         self.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.insertRow(row_number)
