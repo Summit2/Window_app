@@ -35,19 +35,24 @@ class Server:
         возвращает массив строк переданной таблицы
         '''
          # Execute a query
-        self.cur.execute(f"SELECT * FROM {tbl_name};")
+        self.cur.execute(f"SELECT * FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
 
         # Retrieve query results
         records = self.cur.fetchall()
         return records
+    def DELETE(self, tbl_name = '', index = -1):
+        self.cur.execute( f"DELETE from {tbl_name} where {table_info[tbl_name]['columns'][0]}={index};")
     def exit(self):
             self.conn.commit()
             if self.conn is not None:
                 self.conn.close()
-                
+    
 if __name__ == '__main__':
         test = Server()
         print(test.SELECT('courses'))
-        test.INSERT('courses',('course_ngame','price','duration','id_area','id_teacher'),("'Perfect English'",'10000','54','1','1'))
+        test.INSERT('courses',None,("'Perfect English 2'",'1000','54','5','3'))
+
         print(test.SELECT('courses'))
+        # test.DELETE('courses',str(44))
+        print(test.SELECT('courses')) 
         test.exit()

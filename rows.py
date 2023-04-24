@@ -2,9 +2,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtPrintSupport import *
-import sys,sqlite3,time
+import sys,sqlite3
 
-import os
+# import os
 
 from about_tables import table_info
 from posgre_server import Server
@@ -13,7 +13,7 @@ from posgre_server import Server
 
 class InsertDialog(QDialog):
     def __init__(self,tbl_name = 'students', columns = [], isAdmin = None):
-        super(InsertDialog, self).__init__( )
+        super(InsertDialog, self).__init__()
 
         self.tbl_name =tbl_name
         self.columns = columns
@@ -181,7 +181,6 @@ class InsertDialog(QDialog):
             self.insert_values.append(f"'{self.input5.text()}'")
             self.insert_values.append(self.input6.text()) 
 
-        # print(self.insert_values)
         try:
 
             server = Server()
@@ -241,6 +240,8 @@ class DeleteDialog(QDialog):
     def __init__(self,tbl_name = 'manager', columns = []  ):
         super(DeleteDialog, self).__init__( )
 
+        self.tbl_name = tbl_name
+
         self.QBtn = QPushButton()
         self.QBtn.setText("Delete")
 
@@ -262,18 +263,20 @@ class DeleteDialog(QDialog):
 
         delrol = ""
         delrol = self.deleteinput.text()
-        try:
-            self.conn = sqlite3.connect("database.db")
-            self.c = self.conn.cursor()
-            self.c.execute("DELETE from students WHERE roll="+str(delrol))
-            self.conn.commit()
-            self.c.close()
-            self.conn.close()
+        server = Server()
+        
+        try:       
+            #взяли данные из таблицы
+            server.DELETE(self.tbl_name,str(delrol)) 
             QMessageBox.information(QMessageBox(),'Successful','Deleted From Table Successful')
             self.close()
-        except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete student from the database.')
 
+            
+
+            
+        except Exception:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete from the database.')
+        server.exit()
 class AboutDialog(QDialog):
     def __init__(self):
         super(AboutDialog, self).__init__( )
@@ -327,7 +330,7 @@ class PushedTable(QMainWindow):
                 fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"Таблица '{self.tbl_name}'")
-
+        
         self.setMinimumSize(800, 600)
 
         self.tableWidget = QTableWidget()
@@ -359,10 +362,10 @@ class PushedTable(QMainWindow):
         btn_ac_refresh.setStatusTip("Refresh")
         self.toolbar.addAction(btn_ac_refresh)
 
-        btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
-        btn_ac_search.triggered.connect(self.search)
-        btn_ac_search.setStatusTip("Search")
-        self.toolbar.addAction(btn_ac_search)
+        # btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
+        # btn_ac_search.triggered.connect(self.search)
+        # btn_ac_search.setStatusTip("Search")
+        # self.toolbar.addAction(btn_ac_search)
 
         if (self.isAdmin==True):
             btn_ac_delete = QAction(QIcon("icon/delete.png"), "Delete", self)

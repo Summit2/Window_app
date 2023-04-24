@@ -29,8 +29,6 @@ class All_tables(QWidget):
             button.released.connect(self.button_released)
             self.button_layout.addWidget(button)  # add button to vertical layout
 
-        
-
         self.widget_layout.addLayout(self.button_layout)  # add vertical layout to main layout
         # self.widget_layout.addWidget(self.status_label)
         if self.layout() is None:
