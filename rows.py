@@ -423,7 +423,7 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'courses', isAdmin = 0):
+    def __init__(self, tbl_name = 'courses', isAdmin = 1):
         self.isAdmin=isAdmin
         if isAdmin == None:
             self.isAdmin=True 
@@ -439,7 +439,7 @@ class PushedTable(QMainWindow):
             file_menu = self.menuBar().addMenu("&File")
         #если есть связанные таблицы, добавим соответствующее поле
             if (len(table_info[self.tbl_name]['fkey'])!= 0):
-                fkey_menu = self.menuBar().addMenu("&Связанные таблицы")
+                fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
 
 
         if (self.isAdmin==False):
@@ -612,6 +612,8 @@ class PushedTable(QMainWindow):
 	inner join progress on progress.id_course =  courses.id_course
 		group by course_name;''')
         self.report_table.show()   
+    
+    
     def loaddata(self):
         
         #создали соединение
@@ -671,7 +673,7 @@ class PushedTable(QMainWindow):
         dlg.exec_()
     def rating(self):
         dlg = RatingDialog()
-        print('succ')
+        # print('succ')
         dlg.exec_()
 
 class Table(QTableWidget):
