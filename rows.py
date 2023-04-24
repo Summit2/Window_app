@@ -29,6 +29,7 @@ class InsertDialog(QDialog):
 
         layout = QVBoxLayout()
         
+
         #генератор для последовательного взятия колонок
         gen  = self.get_column()
         
@@ -318,7 +319,7 @@ class PushedTable(QMainWindow):
         if isAdmin == None:
             self.isAdmin=True 
         
-        super(PushedTable, self).__init__( )
+        super(PushedTable, self).__init__()
         self.back_button_counter = 0
         #запомнили название таблицы
         self.tbl_name = tbl_name
@@ -334,7 +335,8 @@ class PushedTable(QMainWindow):
         
         if (self.isAdmin==False):
             self.report_menu = self.menuBar().addMenu("&Отчеты")
-            print("Добавили")
+            # print("Добавили")
+            self.add_rating = self.menuBar().addMenu("&Оценить курс")
 
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"Таблица '{self.tbl_name}'")
@@ -364,10 +366,11 @@ class PushedTable(QMainWindow):
                     self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
                  elif self.tbl_name =='teachers':
                      self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
+                 else:
+                     self.tableWidget.setHorizontalHeaderLabels([" ", ''])
 
 
-        # #добавляем отчеты для обычных пользователей
-      
+        #добавляем отчеты для обычных пользователей
         if (self.isAdmin==False):
             
             self.reports = []
@@ -393,6 +396,17 @@ class PushedTable(QMainWindow):
             report_rating = QAction(QIcon(" "), "Рейтинг курсов", self)
             report_rating.triggered.connect(lambda: self.get_report(3))
             self.report_menu.addAction(report_rating)
+
+
+
+        if (self.isAdmin==False):
+            # self.add_rating
+            self.layout = QVBoxLayout()
+            self.branchinput = QComboBox() # create and add value to combobox
+            self.branchinput.addItem("Mechanical")
+            
+            self.layout.addWidget(self.branchinput)
+            # self.layout.show()
 
             #отчет на пройденные курсы
             # self.reports.append( "Пройденные курсы")
