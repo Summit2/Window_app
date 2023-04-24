@@ -726,7 +726,7 @@ class Table(QTableWidget):
             # print(table_data)
         # student_data = temp.cur.fetchall()
         # print(student_data)
-        print(table_data)
+        # print(table_data)
         if fkey_table_name == 'progress':
             for i in range(len(table_data)):
                 temp = Server()

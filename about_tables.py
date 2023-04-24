@@ -34,7 +34,7 @@ table_info ={
     'progress':
     {
         'columns': ['id_progress','id_student','id_course','is_complete','score'],
-        'columns_rus': ["Номер записи", "Номер студента","Номер курса","Выполенение","Оценка"],
+        'columns_rus': ["Номер записи", "Студент","Курс","Выполенение","Оценка"],
         'fkey': []
     }
 
