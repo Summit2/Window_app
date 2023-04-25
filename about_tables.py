@@ -8,7 +8,7 @@ table_info ={
     },
     'manager': {
         'columns': ['id_manager','full_name','login','pswd','email','id_area'],
-        'columns_rus': ["Менеджер", "ФИО",'Логин',"Пароль","Почта","Предм.области"],
+        'columns_rus': ["Менеджер", "ФИО",'Логин',"Пароль","Почта","Предм.область"],
         'fkey': []
     },
     'teachers':

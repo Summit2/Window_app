@@ -20,6 +20,7 @@ class All_tables(QWidget):
         self.button_layout = QVBoxLayout()  # change to vertical layout
         self.widget_layout = QVBoxLayout()
         tables = t
+        self.setFixedSize(220, 250)
         text = QLabel("Доступные таблицы:\n")
         self.widget_layout.addWidget(text)
         for i in range(len(tables)):
