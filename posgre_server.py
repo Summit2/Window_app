@@ -41,7 +41,10 @@ class Server:
                   self.cur.execute(f"SELECT fio as ФИО, email FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
              elif tbl_name =='teachers':
                   self.cur.execute(f"SELECT fio as ФИО, email FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
+            #  elif tbl_name:
+                
          # Execute a query
+         
         else:
             self.cur.execute(f"SELECT * FROM {tbl_name} order by {table_info[tbl_name]['columns'][0]};")
 

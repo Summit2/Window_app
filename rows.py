@@ -476,15 +476,42 @@ class PushedTable(QMainWindow):
                 self.tableWidget.setColumnCount(len(self.columns)) #указываем количество колонок
                 self.tableWidget.setHorizontalHeaderLabels(table_info[self.tbl_name]['columns_rus']) #указываем названия колонок
             if self.isAdmin ==False:
-                 self.tableWidget.setColumnCount(2)
+                 
+                 if self.tbl_name =='manager' or self.tbl_name =='students' or self.tbl_name =='teachers':
+                     self.tableWidget.setColumnCount(2)
                  if self.tbl_name =='manager':
+                    
                     self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
+                    
                  elif self.tbl_name =='students':
                     self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
                  elif self.tbl_name =='teachers':
                      self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
-                 else:
-                     self.tableWidget.setHorizontalHeaderLabels([" ", ''])
+                #  elif self.tbl_name == 'progress':
+                #      self.tableWidget.setHorizontalHeaderLabels(["", ''])
+                #      #создали соединение
+                #      server = Server()
+                #      #взяли данные из таблицы
+                #      table_data = server.SELECT(self.tbl_name, self.isAdmin) 
+                #      if 1:
+                            
+                #             for i in range(len(table_data)):
+                #                 temp = Server()
+                #                 temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
+                #                 temp_data = temp.cur.fetchall()[0][0]
+                #                 # print(temp_data)
+                #                 table_data[i] = list(table_data[i])
+                #                 table_data[i][1] = temp_data
+                #                 temp.exit()
+
+                #                 temp = Server()
+                #                 temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
+                #                 temp_data = temp.cur.fetchall()[0][0]
+                #                 # print(temp_data)
+                #                 table_data[i] = list(table_data[i])
+                #                 # print(table_data[i][2])
+                #                 table_data[i][2] = temp_data
+                #                 temp.exit()
 
 
         #добавляем отчеты для обычных пользователей
@@ -598,8 +625,6 @@ class PushedTable(QMainWindow):
         self.to_get_report = Server()
         
         if index == 0:
-            
-
             self.report_table = Table('students',['ФИО'],'select fio from students group by fio;')
             
         elif index == 1:
@@ -620,6 +645,29 @@ class PushedTable(QMainWindow):
         server = Server()
         #взяли данные из таблицы
         table_data = server.SELECT(self.tbl_name, self.isAdmin) 
+        if self.tbl_name == 'progress':
+            
+            for i in range(len(table_data)):
+                temp = Server()
+                temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                table_data[i][1] = temp_data
+                temp.exit()
+
+                temp = Server()
+                temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                # print(table_data[i][2])
+                table_data[i][2] = temp_data
+                temp.exit()
+                # table_data[i][1] = list(table_data[i][1])
+                # table_data[i][1] = temp.cur.fetchall()[0][0]
+        
+            
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
@@ -723,6 +771,7 @@ class Table(QTableWidget):
 
             #запоминаем информацию с селекта
             table_data = self.to_get_report.cur.fetchall()
+            # table_data[:]=list(table_data[:])
             # print(table_data)
         # student_data = temp.cur.fetchall()
         # print(student_data)
@@ -747,6 +796,27 @@ class Table(QTableWidget):
                 temp.exit()
                 # table_data[i][1] = list(table_data[i][1])
                 # table_data[i][1] = temp.cur.fetchall()[0][0]
+        
+        elif fkey_table_name == 'courses' and columns == None:
+                for i in range(len(table_data)):
+                    temp = Server()
+                    temp_student = (temp.cur.execute(f'select area_name from subject_area where id_area={table_data[i][4]}'))
+                    temp_data = temp.cur.fetchall()[0][0]
+                    # print(temp_data)
+                    table_data[i] = list(table_data[i])
+                    table_data[i][4] = temp_data
+                    temp.exit()
+
+                    temp = Server()
+                    temp_student = (temp.cur.execute(f'select fio from teachers where id_teacher={table_data[i][5]}'))
+                    temp_data = temp.cur.fetchall()[0][0]
+                    # print(temp_data)
+                    table_data[i] = list(table_data[i])
+                    # print(table_data[i][2])
+                    table_data[i][5] = temp_data
+                    temp.exit()
+                    # table_data[i][1] = list(table_data[i][1])
+                    # table_data[i][1] = temp.cur.fetchall()[0][0]
         self.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.insertRow(row_number)
