@@ -1,15 +1,11 @@
 import sys
-# from PySide6 import QtCore, QtWidgets, QtGui
-# from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
 from table import Table
 from auth import AuthDialog
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtPrintSupport import *
-
 from rows import PushedTable
-
 from about_tables import table_info
 class All_tables(QWidget):    
 

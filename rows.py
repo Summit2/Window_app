@@ -447,7 +447,7 @@ class PushedTable(QMainWindow):
             self.report_menu = self.menuBar().addMenu("&Отчеты")
             
         if (self.isAdmin==False):
-            self.add_rating = self.menuBar().addMenu("&Действия с курсами")
+            self.add_rating = self.menuBar().addMenu("&Действия")
             # self.add_rating.addAction()
             # self.add_rating.triggered.connect(self.rating)
             about_action = QAction(QIcon("icon/info.png"),"Оценить курс", self)
@@ -456,7 +456,7 @@ class PushedTable(QMainWindow):
             self.add_rating.addAction(about_action)
 
         help_menu = self.menuBar().addMenu("&About")
-        self.setWindowTitle(f"Таблица '{self.tbl_name}'")
+        self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления")
         
         self.setMinimumSize(800, 600)
 
@@ -664,10 +664,7 @@ class PushedTable(QMainWindow):
                 # print(table_data[i][2])
                 table_data[i][2] = temp_data
                 temp.exit()
-                # table_data[i][1] = list(table_data[i][1])
-                # table_data[i][1] = temp.cur.fetchall()[0][0]
-        
-            
+                
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
