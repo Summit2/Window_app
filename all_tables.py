@@ -37,13 +37,12 @@ class All_tables(QWidget):
         sending_button = self.sender()
         
         button_name = sending_button.objectName()
-        # print(button_name[7:])
-        # self.table = Table(None, button_name[7:])
+       
         self.window = PushedTable(button_name[7:],self.isAdmin)
         self.window.show()
         
         self.window.loaddata()
-        #self.table.show()
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -56,9 +55,12 @@ if __name__ == '__main__':
     if (passdlg.exec_() == QDialog.Accepted):
         
         admin_window.isAdmin = passdlg.isAdmin
-        # print(window.isAdmin )
-        # if admin_window.isAdmin == True:
-        admin_window.show()
+        if admin_window.isAdmin == False:
+            user_table = PushedTable()
+            # user_table.loaddata()
+            user_table.show()
+        else:
+            admin_window.show()
             
         # else:
         #     user_window.show()

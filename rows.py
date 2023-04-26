@@ -3,12 +3,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtPrintSupport import *
 import sys,sqlite3
-
-# import os
-
 from about_tables import table_info
 from posgre_server import Server
-
 
 class RatingDialog(QDialog):
     def __init__(self):
@@ -387,6 +383,7 @@ class DeleteDialog(QDialog):
         except Exception:
             QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete from the database.')
         server.exit()
+
 class AboutDialog(QDialog):
     def __init__(self):
         super(AboutDialog, self).__init__( )
@@ -423,7 +420,7 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'courses', isAdmin = 1):
+    def __init__(self, tbl_name = 'courses', isAdmin = False):
         self.isAdmin=isAdmin
         if isAdmin == None:
             self.isAdmin=True 
@@ -434,12 +431,17 @@ class PushedTable(QMainWindow):
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
 
+        
         #добавили графу связанные таблицы
         if self.isAdmin==True:
             file_menu = self.menuBar().addMenu("&File")
+            searchuser_action = QAction(QIcon("icon/search.png"), "Поиск", self)
+            searchuser_action.triggered.connect(self.search)
+            file_menu.addAction(searchuser_action)
         #если есть связанные таблицы, добавим соответствующее поле
             if (len(table_info[self.tbl_name]['fkey'])!= 0):
                 fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
+        
 
 
         if (self.isAdmin==False):
@@ -454,7 +456,10 @@ class PushedTable(QMainWindow):
             about_action.triggered.connect(self.rating)
 
             self.add_rating.addAction(about_action)
-
+            # поиск для всех 
+            searchuser_action = QAction(QIcon("icon.png"), "Поиск", self)
+            searchuser_action.triggered.connect(self.search)
+            self.add_rating.addAction(searchuser_action)
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления")
         
@@ -487,32 +492,7 @@ class PushedTable(QMainWindow):
                     self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
                  elif self.tbl_name =='teachers':
                      self.tableWidget.setHorizontalHeaderLabels(['ФИО', 'email'])
-                #  elif self.tbl_name == 'progress':
-                #      self.tableWidget.setHorizontalHeaderLabels(["", ''])
-                #      #создали соединение
-                #      server = Server()
-                #      #взяли данные из таблицы
-                #      table_data = server.SELECT(self.tbl_name, self.isAdmin) 
-                #      if 1:
-                            
-                #             for i in range(len(table_data)):
-                #                 temp = Server()
-                #                 temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
-                #                 temp_data = temp.cur.fetchall()[0][0]
-                #                 # print(temp_data)
-                #                 table_data[i] = list(table_data[i])
-                #                 table_data[i][1] = temp_data
-                #                 temp.exit()
-
-                #                 temp = Server()
-                #                 temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
-                #                 temp_data = temp.cur.fetchall()[0][0]
-                #                 # print(temp_data)
-                #                 table_data[i] = list(table_data[i])
-                #                 # print(table_data[i][2])
-                #                 table_data[i][2] = temp_data
-                #                 temp.exit()
-
+                
 
         #добавляем отчеты для обычных пользователей
         if (self.isAdmin==False):
@@ -603,17 +583,16 @@ class PushedTable(QMainWindow):
 
                 fkey_menu.addAction(watch_fkey_action1)
                 fkey_menu.addAction(watch_fkey_action2)
+        
 
-        # searchuser_action = QAction(QIcon("icon/search.png"), "Search", self)
-        # searchuser_action.triggered.connect(self.search)
-        # file_menu.addAction(searchuser_action)
+        
         if (self.isAdmin==True):
             deluser_action = QAction(QIcon("icon/trash.png"), "Delete", self)
             deluser_action.triggered.connect(self.delete)
             file_menu.addAction(deluser_action)
 
-
-        if (self.isAdmin==False):
+        #кнопка поиска
+        if (1):
             about_action = QAction(QIcon("icon/info.png"),"Developer", self)
             about_action.triggered.connect(self.about)
             help_menu.addAction(about_action)
@@ -625,17 +604,21 @@ class PushedTable(QMainWindow):
         self.to_get_report = Server()
         
         if index == 0:
-            self.report_table = Table('students',['ФИО'],'select fio from students group by fio;')
+            self.report_table = Table('students',['ФИО'],'select fio from students group by fio;', 'Отчет о всех студентах')
             
         elif index == 1:
-            self.report_table = Table('courses', ['Название','Цена (руб)'],'select course_name as Название, sum(price) as Название from courses group by course_name;')
+            self.report_table = Table('courses', ['Название','Цена (руб)'],"""
+            select course_name as Название, sum(price) as Название from courses group by course_name;""","""
+            Отчет о ценах курсов""")
 
-        elif index ==2:
-            self.report_table = Table('teachers', ['Имя', 'Почта'] ,'select fio, email from teachers;')
-        elif index ==3:
+        elif index == 2:
+            self.report_table = Table('teachers', ['Имя', 'Почта'] ,'select fio, email from teachers;',
+                                      """Отчет о данных учителей
+                                      """)
+        elif index == 3:
             self.report_table = Table(None, ['Название','Оценка по пятибальной шкале'], '''select course_name , round(sum(cast(score as numeric ))/count(score),2)  from courses 
 	inner join progress on progress.id_course =  courses.id_course
-		group by course_name;''')
+		group by course_name;''',''' Отчет об оценках курсов''')
         self.report_table.show()   
     
     
@@ -718,11 +701,10 @@ class PushedTable(QMainWindow):
         dlg.exec_()
     def rating(self):
         dlg = RatingDialog()
-        # print('succ')
         dlg.exec_()
 
 class Table(QTableWidget):
-    def __init__(self, tbl_name = None ,columns = None, SELECT = None):
+    def __init__(self, tbl_name = None ,columns = None, SELECT = None, window_title = None):
         super().__init__()
 
        
@@ -732,8 +714,10 @@ class Table(QTableWidget):
         # dlg = FkeyDialog(fkey_table_name, self.columns) 
         # # dlg.exec_()
         # dlg.show()
-        
-        self.setWindowTitle(" ")
+        if window_title == None:
+            self.setWindowTitle(" ")
+        else:
+            self.setWindowTitle(f'{window_title}')
         self.setMinimumSize(800, 600)
         fkey_table_name =tbl_name
         self.columns = columns
@@ -768,11 +752,7 @@ class Table(QTableWidget):
 
             #запоминаем информацию с селекта
             table_data = self.to_get_report.cur.fetchall()
-            # table_data[:]=list(table_data[:])
-            # print(table_data)
-        # student_data = temp.cur.fetchall()
-        # print(student_data)
-        # print(table_data)
+           
         if fkey_table_name == 'progress':
             for i in range(len(table_data)):
                 temp = Server()
