@@ -11,7 +11,7 @@ from headers import *
 
 
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'courses', isAdmin = False):
+    def __init__(self, tbl_name = 'courses', isAdmin = True):
         self.isAdmin=isAdmin
         if isAdmin == None:
             self.isAdmin=True 
@@ -33,8 +33,8 @@ class PushedTable(QMainWindow):
         #добавляем поиск для админа
         if self.isAdmin==True:
             # pass
-            searchuser_action = QAction(QIcon("icon/search.png"), "Поиск", self)
-            searchuser_action.triggered.connect(self.search)
+            searchuser_action = QAction(QIcon("icon/seach.png"), "Поиск", self)
+            searchuser_action.triggered.connect(lambda: self.search(self.tbl_name, True))
             file_menu.addAction(searchuser_action)
 
         if (self.isAdmin==False):
@@ -63,7 +63,7 @@ class PushedTable(QMainWindow):
 
         help_menu = self.menuBar().addMenu("&About")
         if (self.isAdmin==False):
-            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления пользователя")
+            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления пользователя. ")
         else:
             self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления администратора")
         

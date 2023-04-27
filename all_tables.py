@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtPrintSupport import *
 from rows import PushedTable
-from about_tables import table_info
+from about_tables import table_info, tables_rus
 class All_tables(QWidget):    
 
     def __init__(self, parent=None, t = list(table_info.keys())):
@@ -21,7 +21,8 @@ class All_tables(QWidget):
         self.widget_layout.addWidget(text)
         for i in range(len(tables)):
             button = QToolButton()
-            button.setText(str(tables[i]))
+            button.setText(tables_rus[i])
+            # print()
             button.setObjectName(f'Button_{tables[i]}')
             button.released.connect(self.button_released)
             self.button_layout.addWidget(button)  # add button to vertical layout

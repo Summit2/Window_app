@@ -13,7 +13,9 @@ class SearchDialog(QDialog):
 
         self.QBtn = QPushButton()
         self.QBtn.setText("Search")
-        
+        if self.isAdmin == True:
+            self.setWindowTitle("Поиск по таблице")
+
         if self.tbl_name == 'courses' and self.isAdmin == False:
 
             self.setWindowTitle("Поиск по имени студентов")
@@ -51,12 +53,12 @@ class SearchDialog(QDialog):
 					group by course_name ""","Поиск по названию курсов")
                 self.extra_table.show()
                 self.hide()
-            if self.tbl_name == 'teachers':
+            elif self.tbl_name == 'teachers':
                 self.extra_table = Table('teachers',["Имя", "Почта"],f"""select fio, email from teachers 
                 where fio like '{searchrol}%';""","Поиск по имени преподавателей")
                 self.extra_table.show()
                 self.hide()
-            if self.tbl_name == 'students':
+            elif self.tbl_name == 'students':
                 self.extra_table = Table('students',['Имя', "Количество пройденных курсов"],f"""
                 select fio, count(id_course) filter (where is_complete = True ) from students 
 	                inner join progress on progress.id_student = students.id_student 
@@ -64,6 +66,36 @@ class SearchDialog(QDialog):
                         "Поиск по имени студентов")
                 self.extra_table.show()
                 self.hide()
+
+        if self.isAdmin==True:
+            if self.tbl_name == 'courses':
+                self.extra_table = Table('courses',table_info[self.tbl_name]['columns_rus'],f"""
+                select * from courses where course_name like '{searchrol}%';
+					 ""","Поиск по названию курсов")
+                self.extra_table.show()
+                self.hide()
+            elif self.tbl_name == 'teachers':
+                self.extra_table = Table('teachers',table_info[self.tbl_name]['columns_rus'],f"""select * from teachers 
+                where fio like '{searchrol}%';""","Поиск по имени преподавателей")
+                self.extra_table.show()
+                self.hide()
+            elif self.tbl_name == 'students':
+                self.extra_table = Table('students',table_info[self.tbl_name]['columns_rus'],f"""
+                select * from students 
+	                
+		                where fio like '{searchrol}%'""",
+                        "Поиск по имени студентов")
+                self.extra_table.show()
+                self.hide()
+            elif self.tbl_name == 'manager':
+                self.extra_table = Table('students',table_info[self.tbl_name]['columns_rus'],f"""
+                select * from manager 
+	                
+		                where fio like '{searchrol}%'""",
+                        "Поиск по имени студентов")
+                self.extra_table.show()
+                self.hide()
+
         # try:
         #     self.conn = sqlite3.connect("database.db")
         #     self.c = self.conn.cursor()
