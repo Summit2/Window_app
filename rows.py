@@ -51,14 +51,14 @@ class PushedTable(QMainWindow):
             self.add_rating.addAction(about_action)
             # поиск для всех 
 
-            searchcourses_action = QAction(QIcon("icon.png"), "Поиск по курсам", self)
-            searchcourses_action.triggered.connect(lambda: self.search(self.isAdmin,'courses'))
+            searchcourses_action = QAction(QIcon("icon.png"), "Поиск по названию курсов", self)
+            searchcourses_action.triggered.connect(lambda: self.search('courses',self.isAdmin))
             self.add_rating.addAction(searchcourses_action)
-            searchteacher_action = QAction(QIcon("icon.png"), "Поиск по преподавателям", self)
-            searchteacher_action.triggered.connect(lambda: self.search(self.isAdmin,'teachers'))
+            searchteacher_action = QAction(QIcon("icon.png"), "Поиск по имени преподавателей", self)
+            searchteacher_action.triggered.connect(lambda: self.search('teachers',self.isAdmin))
             self.add_rating.addAction(searchteacher_action)
-            searchuser_action = QAction(QIcon("icon.png"), "Поиск по студентам", self)
-            searchuser_action.triggered.connect(lambda: self.search(self.isAdmin,'students'))
+            searchuser_action = QAction(QIcon("icon.png"), "Поиск по имени студентов", self)
+            searchuser_action.triggered.connect(lambda: self.search('students', self.isAdmin))
             self.add_rating.addAction(searchuser_action)
 
         help_menu = self.menuBar().addMenu("&About")
@@ -296,7 +296,8 @@ class PushedTable(QMainWindow):
         dlg = DeleteDialog(self.tbl_name, self.columns)
         dlg.exec_()
 
-    def search(self,tbl_name, is_Admin = None):
+    def search(self,tbl_name, is_Admin):
+        '''нужно указать is_Admin'''
         dlg = SearchDialog(tbl_name, is_Admin)
         dlg.exec_()
 

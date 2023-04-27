@@ -3,7 +3,13 @@ from headers import *
 class Table(QTableWidget):
     def __init__(self, tbl_name = None ,columns = None, SELECT = None, window_title = None):
         super().__init__()
-
+        ''' создает отдельную висящую в воздухе табличку
+            если надо что-то особенное, указывать надо все
+            таблицу
+            колонки
+            свой селект
+            и название окошка
+        '''
        
         if window_title == None:
             self.setWindowTitle(" ")
