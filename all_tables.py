@@ -61,10 +61,6 @@ if __name__ == '__main__':
             user_table.show()
         else:
             admin_window.show()
-            
-        # else:
-        #     user_window.show()
-        #     user_window.loaddata()
-
+        
         
     sys.exit(app.exec())

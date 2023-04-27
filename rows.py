@@ -1,423 +1,14 @@
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtPrintSupport import *
-import sys,sqlite3
-from about_tables import table_info
-from posgre_server import Server
+from Dialogs.search import SearchDialog
+from Dialogs.rating import RatingDialog
+from Dialogs.delete import DeleteDialog
+from Dialogs.about import AboutDialog
+from Dialogs.insert import InsertDialog
+from extra_table import Table
+from headers import *
 
-class RatingDialog(QDialog):
-    def __init__(self):
-        super(RatingDialog, self).__init__()
 
-        
 
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Оставить оценку")
 
-        self.setWindowTitle(f"Оценить курс")
-        self.setFixedWidth(300)
-        self.setFixedHeight(250)
-
-        # self.QBtn.clicked.connect('')
-
-        layout = QVBoxLayout()
-        
-        # self.input1 = QLineEdit()
-        # self.input1.setPlaceholderText('Оценка')
-            
-        # layout.addWidget(self.input1) 
-            
-
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
-
-        # Self.QBtn = QPushButton()   #create Push button
-        # self.QBtn.setText("Register")
-
-       
-        self.setFixedWidth(300)
-        self.setFixedHeight(250)
-        
-        self.QBtn.clicked.connect(self.add_score)
-
-        # layout = QVBoxLayout()  #set verticle layout
-
-        # self.nameinput = QLineEdit()
-        # self.nameinput.setPlaceholderText("Name")
-        # layout.addWidget(self.nameinput)
-
-        # self.branchinput = QComboBox() # create and add value to combobox
-        # self.branchinput.addItem("Mechanical")
-        # self.branchinput.addItem("Civil")
-        # self.branchinput.addItem("Electrical")
-        # self.branchinput.addItem("Electronics and Communication")
-        # self.branchinput.addItem("Computer Science")
-        # self.branchinput.addItem("Information Technology")
-        # layout.addWidget(self.branchinput)
-        self.name = QLabel("Название курса:")
-
-        layout.addWidget(self.name)
-        self.courses_names = QComboBox()
-        semidata=["С++ для чайников",
-            "Оптика для тех, у кого лапки",
-            "Java для чайников",
-            "Основы программирования",
-            "Python for nothing",
-            "Ядерная физика для самых маленьких",
-            "Интегралы и Дифференциальные уравнения",
-            "Использование штанги для становления чемпионом"]
-        self.courses_names.addItem(semidata[0])
-        self.courses_names.addItem(semidata[1])
-        self.courses_names.addItem(semidata[2])
-        self.courses_names.addItem(semidata[3])
-        self.courses_names.addItem(semidata[4])
-        self.courses_names.addItem(semidata[5])
-        self.courses_names.addItem(semidata[6])
-        self.courses_names.addItem(semidata[7])
-        layout.addWidget(self.courses_names)
-
-        # self.mobileinput = QLineEdit()
-        # self.mobileinput.setPlaceholderText("Mobile")
-        # self.mobileinput.setInputMask('99999 99999') # set validator for user can only input interger input
-        # layout.addWidget(self.mobileinput)
-
-        self.score = QLabel("Oценка:")
-
-        layout.addWidget(self.score)
-        
-        self.seminput = QComboBox()
-        self.seminput.addItem("1")
-        self.seminput.addItem("2")
-        self.seminput.addItem("3")
-        self.seminput.addItem("4")
-        self.seminput.addItem("5")
-        
-        layout.addWidget(self.seminput)
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
-
-# this function get value from all input box and insert these values in database.
-
-    def add_score(self):
-
-        
-        c_name = self.courses_names.itemText(self.courses_names.currentIndex())
-        grade = self.seminput.itemText(self.seminput.currentIndex())
-        # print(c_name)
-        # print(grade)
-        
-        serv = Server()
-        print(c_name)
-        serv.cur.execute( f"select id_course from courses where course_name = '{c_name}' ;")
-        name_course  = (serv.cur.fetchall())[0][0]
-        serv.cur.execute(f"insert into progress (id_student,id_course,is_complete,score) values (19,'{name_course}','true',{grade});")
-        serv.exit()
-
-        self.close()
-
-class InsertDialog(QDialog):
-    def __init__(self,tbl_name = 'students', columns = [], isAdmin = None):
-        super(InsertDialog, self).__init__()
-
-        self.tbl_name =tbl_name
-        self.columns = columns
-
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Register")
-
-        self.setWindowTitle(f"Add {tbl_name}")
-        self.setFixedWidth(300)
-        self.setFixedHeight(250)
-
-        self.QBtn.clicked.connect(self.add)
-
-        layout = QVBoxLayout()
-        
-
-        #генератор для последовательного взятия колонок
-        gen  = self.get_column()
-        
-        
-        
-        if self.tbl_name == 'students':
-            
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            self.input2 = QLineEdit()
-            self.input2.setPlaceholderText(next(gen))
-            self.input3 = QLineEdit()
-            self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
-            self.input5 = QLineEdit()
-            self.input5.setPlaceholderText(next(gen))
-             
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
-            layout.addWidget(self.input4) 
-            layout.addWidget(self.input5) 
-
-
-        elif self.tbl_name == 'manager':
-        
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            self.input2 = QLineEdit()
-            self.input2.setPlaceholderText(next(gen))
-            self.input3 = QLineEdit()
-            self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
-            self.input5 = QLineEdit()
-            self.input5.setPlaceholderText(next(gen))
-            self.input6 = QLineEdit()
-            self.input6.setPlaceholderText(next(gen))
-            # layout.addWidget(self.input1)  
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
-            layout.addWidget(self.input4) 
-            layout.addWidget(self.input5) 
-            layout.addWidget(self.input6) 
-
-            
-        elif self.tbl_name == 'teachers':
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            self.input2 = QLineEdit()
-            self.input2.setPlaceholderText(next(gen))
-            self.input3 = QLineEdit()
-            self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
-            self.input5 = QLineEdit()
-            self.input5.setPlaceholderText(next(gen))
-            
-            # layout.addWidget(self.input1)  
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
-            layout.addWidget(self.input4) 
-            layout.addWidget(self.input5) 
-             
-            
-        elif self.tbl_name == 'courses':
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            self.input2 = QLineEdit()
-            self.input2.setPlaceholderText(next(gen))
-            self.input3 = QLineEdit()
-            self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
-            self.input5 = QLineEdit()
-            self.input5.setPlaceholderText(next(gen))
-            self.input6 = QLineEdit()
-            self.input6.setPlaceholderText(next(gen))
-            # layout.addWidget(self.input1)  
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
-            layout.addWidget(self.input4) 
-            layout.addWidget(self.input5) 
-            layout.addWidget(self.input6) 
-
-        elif self.tbl_name == 'subject_area':
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            
-            # layout.addWidget(self.input1)  
-            layout.addWidget(self.input2) 
-            
-        elif self.tbl_name == 'progress':
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
-            self.input2 = QLineEdit()
-            self.input2.setPlaceholderText(next(gen))
-            self.input3 = QLineEdit()
-            self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
-            self.input5 = QLineEdit()
-            self.input5.setPlaceholderText(next(gen))
-            
-            
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
-            layout.addWidget(self.input4) 
-            layout.addWidget(self.input5) 
-
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
-    def get_column(self):
-        for col in self.columns:
-            yield str(col)
-    def add(self):
-        #массив значений для insert 
-        self.insert_values = []
-
-        if self.tbl_name == 'students':
-            self.insert_values.append(f"'{self.input2.text()}'")
-            self.insert_values.append(f"'{self.input3.text()}'")
-            self.insert_values.append(f"'{self.input4.text()}'")
-            self.insert_values.append(f"'{self.input5.text()}'")
-
-        elif self.tbl_name == 'teachers':
-            self.insert_values.append(f"'{self.input2.text()}'")
-            self.insert_values.append(f"'{self.input3.text()}'")
-            self.insert_values.append(f"'{self.input4.text()}'")
-            self.insert_values.append(f"'{self.input5.text()}'")
-            # self.insert_values.append(f"'{self.input6.text()}'")
-        elif self.tbl_name == 'courses':
-            self.insert_values.append(f"'{self.input2.text()}'")
-            self.insert_values.append(self.input3.text())
-            self.insert_values.append(self.input4.text())
-            self.insert_values.append(self.input5.text())
-            self.insert_values.append(self.input6.text())
-        elif self.tbl_name == 'subject_area':
-            self.insert_values.append(f"'{self.input2.text()}'")
-        elif self.tbl_name == 'manager':
-            self.insert_values.append(f"'{self.input2.text()}'")
-            self.insert_values.append(f"'{self.input3.text()}'")
-            self.insert_values.append(f"'{self.input4.text()}'")
-            self.insert_values.append(f"'{self.input5.text()}'")
-            self.insert_values.append(self.input6.text())
-        elif self.tbl_name == 'progress':  
-            self.insert_values.append(self.input2.text())
-            self.insert_values.append(self.input3.text())
-            self.insert_values.append(self.input4.text())
-            self.insert_values.append(f"'{self.input5.text()}'")
-            self.insert_values.append(self.input6.text()) 
-
-        try:
-
-            server = Server()
-
-            server.INSERT(self.tbl_name, self.columns, self.insert_values)
-            
-            server.exit()
-
-            QMessageBox.information(QMessageBox(),'Successful','Info added successfully to the database.')
-            self.close()
-
-        except Exception:
-            # print(Exception)
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
-
-class SearchDialog(QDialog):
-    def __init__(self, tbl_name = 'manager', columns = [] ):
-        super(SearchDialog, self).__init__( )
-
-        self.tbl_name = tbl_name
-
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Search")
-
-        self.setWindowTitle("Search user")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
-        self.QBtn.clicked.connect(self.search)
-        layout = QVBoxLayout()
-
-        self.searchinput = QLineEdit()
-        self.onlyInt = QIntValidator()
-        self.searchinput.setValidator(self.onlyInt)
-        self.searchinput.setPlaceholderText("Roll No.")
-        layout.addWidget(self.searchinput)
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
-
-    def search(self):
-
-        searchrol = ""
-        searchrol = self.searchinput.text()
-        try:
-            self.conn = sqlite3.connect("database.db")
-            self.c = self.conn.cursor()
-            result = self.c.execute("SELECT * from students")
-            row = result.fetchone()
-            serachresult = "Rollno : "+str(row[0])+'\n'+"Name : "+str(row[1])+'\n'+"Branch : "+str(row[2])+'\n'+"Sem : "+str(row[3])+'\n'+"Address : "+str(row[4])
-            QMessageBox.information(QMessageBox(), 'Successful', serachresult)
-            self.conn.commit()
-            self.c.close()
-            self.conn.close()
-        except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', f'Could not Find {self.tbl_name } from the database.')
-
-class DeleteDialog(QDialog):
-    def __init__(self,tbl_name = 'manager', columns = []  ):
-        super(DeleteDialog, self).__init__( )
-
-        self.tbl_name = tbl_name
-
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Delete")
-
-        self.setWindowTitle("Delete")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
-        self.QBtn.clicked.connect(self.delete)
-        layout = QVBoxLayout()
-
-        self.deleteinput = QLineEdit()
-        self.onlyInt = QIntValidator()
-        self.deleteinput.setValidator(self.onlyInt)
-        self.deleteinput.setPlaceholderText("Roll No.")
-        layout.addWidget(self.deleteinput)
-        layout.addWidget(self.QBtn)
-        self.setLayout(layout)
-
-    def delete(self):
-
-        delrol = ""
-        delrol = self.deleteinput.text()
-        server = Server()
-        
-        try:       
-            #взяли данные из таблицы
-            server.DELETE(self.tbl_name,str(delrol)) 
-            QMessageBox.information(QMessageBox(),'Successful','Deleted From Table Successful')
-            self.close()
-
-            
-
-            
-        except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete from the database.')
-        server.exit()
-
-class AboutDialog(QDialog):
-    def __init__(self):
-        super(AboutDialog, self).__init__( )
-
-        self.setFixedWidth(300)
-        self.setFixedHeight(250)
-
-        QBtn = QDialogButtonBox.Ok  # No cancel
-        self.buttonBox = QDialogButtonBox(QBtn)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
-
-        layout = QVBoxLayout()
-
-        title = QLabel("Ilya Sokolov, \nBMSTU STUDENT")
-        font = title.font()
-        font.setPointSize(20)
-        title.setFont(font)
-
-        labelpic = QLabel()
-        pixmap = QPixmap('icon/logo.png')
-        pixmap = pixmap.scaledToWidth(275)
-        labelpic.setPixmap(pixmap)
-        labelpic.setFixedHeight(150)
-
-        layout.addWidget(title)
-
-        layout.addWidget(QLabel("GROUP IU5-43B"))
-        layout.addWidget(labelpic)
-
-
-        layout.addWidget(self.buttonBox)
-
-        self.setLayout(layout)
 
 class PushedTable(QMainWindow):
     def __init__(self, tbl_name = 'courses', isAdmin = False):
@@ -431,18 +22,20 @@ class PushedTable(QMainWindow):
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
 
-        
+        # file_menu = self.menuBar().addMenu("&Действия")    
         #добавили графу связанные таблицы
         if self.isAdmin==True:
-            file_menu = self.menuBar().addMenu("&File")
-            searchuser_action = QAction(QIcon("icon/search.png"), "Поиск", self)
-            searchuser_action.triggered.connect(self.search)
-            file_menu.addAction(searchuser_action)
+            file_menu = self.menuBar().addMenu("&Действия")
+        
         #если есть связанные таблицы, добавим соответствующее поле
             if (len(table_info[self.tbl_name]['fkey'])!= 0):
                 fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
-        
-
+        #добавляем поиск для админа
+        if self.isAdmin==True:
+            # pass
+            searchuser_action = QAction(QIcon("icon/search.png"), "Поиск", self)
+            searchuser_action.triggered.connect(self.search)
+            file_menu.addAction(searchuser_action)
 
         if (self.isAdmin==False):
 
@@ -457,11 +50,22 @@ class PushedTable(QMainWindow):
 
             self.add_rating.addAction(about_action)
             # поиск для всех 
-            searchuser_action = QAction(QIcon("icon.png"), "Поиск", self)
-            searchuser_action.triggered.connect(self.search)
+
+            searchcourses_action = QAction(QIcon("icon.png"), "Поиск по курсам", self)
+            searchcourses_action.triggered.connect(lambda: self.search(self.isAdmin,'courses'))
+            self.add_rating.addAction(searchcourses_action)
+            searchteacher_action = QAction(QIcon("icon.png"), "Поиск по преподавателям", self)
+            searchteacher_action.triggered.connect(lambda: self.search(self.isAdmin,'teachers'))
+            self.add_rating.addAction(searchteacher_action)
+            searchuser_action = QAction(QIcon("icon.png"), "Поиск по студентам", self)
+            searchuser_action.triggered.connect(lambda: self.search(self.isAdmin,'students'))
             self.add_rating.addAction(searchuser_action)
+
         help_menu = self.menuBar().addMenu("&About")
-        self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления")
+        if (self.isAdmin==False):
+            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления пользователя")
+        else:
+            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления администратора")
         
         self.setMinimumSize(800, 600)
 
@@ -621,7 +225,7 @@ class PushedTable(QMainWindow):
 		group by course_name;''',''' Отчет об оценках курсов''')
         self.report_table.show()   
     
-    
+    #загрузка данных с сервера
     def loaddata(self):
         
         #создали соединение
@@ -692,8 +296,8 @@ class PushedTable(QMainWindow):
         dlg = DeleteDialog(self.tbl_name, self.columns)
         dlg.exec_()
 
-    def search(self):
-        dlg = SearchDialog(self.tbl_name, self.columns)
+    def search(self,tbl_name, is_Admin = None):
+        dlg = SearchDialog(tbl_name, is_Admin)
         dlg.exec_()
 
     def about(self):
@@ -703,104 +307,7 @@ class PushedTable(QMainWindow):
         dlg = RatingDialog()
         dlg.exec_()
 
-class Table(QTableWidget):
-    def __init__(self, tbl_name = None ,columns = None, SELECT = None, window_title = None):
-        super().__init__()
 
-       
-
-    
-        
-        # dlg = FkeyDialog(fkey_table_name, self.columns) 
-        # # dlg.exec_()
-        # dlg.show()
-        if window_title == None:
-            self.setWindowTitle(" ")
-        else:
-            self.setWindowTitle(f'{window_title}')
-        self.setMinimumSize(800, 600)
-        fkey_table_name =tbl_name
-        self.columns = columns
-        self.setAlternatingRowColors(True)
-        if columns == None:
-            self.setColumnCount(len(table_info[fkey_table_name]['columns'])) #указываем количество колонок
-        else:
-            self.setColumnCount(len(self.columns))
-        self.horizontalHeader().setCascadingSectionResizes(False)
-        self.horizontalHeader().setSortIndicatorShown(False)
-        self.horizontalHeader().setStretchLastSection(True)
-        self.verticalHeader().setVisible(False)
-        self.verticalHeader().setCascadingSectionResizes(False)
-        self.verticalHeader().setStretchLastSection(False)
-        if columns == None:
-            self.setHorizontalHeaderLabels(table_info[fkey_table_name]['columns_rus'])#указываем названия колонок
-        else:
-            self.setHorizontalHeaderLabels(self.columns)
-
-        #создали соединение
-        server = Server()
-        if SELECT==None:
-            #взяли данные из таблицы
-            table_data = server.SELECT(fkey_table_name) 
-            
-        else:
-            
-            self.to_get_report = Server()
-        
-        
-            self.to_get_report.cur.execute(f'{SELECT}')
-
-            #запоминаем информацию с селекта
-            table_data = self.to_get_report.cur.fetchall()
-           
-        if fkey_table_name == 'progress':
-            for i in range(len(table_data)):
-                temp = Server()
-                temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
-                temp_data = temp.cur.fetchall()[0][0]
-                # print(temp_data)
-                table_data[i] = list(table_data[i])
-                table_data[i][1] = temp_data
-                temp.exit()
-
-                temp = Server()
-                temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
-                temp_data = temp.cur.fetchall()[0][0]
-                # print(temp_data)
-                table_data[i] = list(table_data[i])
-                # print(table_data[i][2])
-                table_data[i][2] = temp_data
-                temp.exit()
-                # table_data[i][1] = list(table_data[i][1])
-                # table_data[i][1] = temp.cur.fetchall()[0][0]
-        
-        elif fkey_table_name == 'courses' and columns == None:
-                for i in range(len(table_data)):
-                    temp = Server()
-                    temp_student = (temp.cur.execute(f'select area_name from subject_area where id_area={table_data[i][4]}'))
-                    temp_data = temp.cur.fetchall()[0][0]
-                    # print(temp_data)
-                    table_data[i] = list(table_data[i])
-                    table_data[i][4] = temp_data
-                    temp.exit()
-
-                    temp = Server()
-                    temp_student = (temp.cur.execute(f'select fio from teachers where id_teacher={table_data[i][5]}'))
-                    temp_data = temp.cur.fetchall()[0][0]
-                    # print(temp_data)
-                    table_data[i] = list(table_data[i])
-                    # print(table_data[i][2])
-                    table_data[i][5] = temp_data
-                    temp.exit()
-                    # table_data[i][1] = list(table_data[i][1])
-                    # table_data[i][1] = temp.cur.fetchall()[0][0]
-        self.setRowCount(0)
-        for row_number, row_data in enumerate(table_data):
-            self.insertRow(row_number)
-            for column_number, data in enumerate(row_data):
-                self.setItem(row_number, column_number,QTableWidgetItem(str(data)))
-        server.exit()
-        
         
 
 if __name__=='__main__':
