@@ -15,7 +15,7 @@ class Table(QTableWidget):
             self.setWindowTitle(" ")
         else:
             self.setWindowTitle(f'{window_title}')
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(900, 600)
         fkey_table_name =tbl_name
         self.columns = columns
         self.setAlternatingRowColors(True)

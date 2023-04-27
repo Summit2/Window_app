@@ -6,9 +6,9 @@ class DeleteDialog(QDialog):
         self.tbl_name = tbl_name
 
         self.QBtn = QPushButton()
-        self.QBtn.setText("Delete")
+        self.QBtn.setText("Удалить запись")
 
-        self.setWindowTitle("Delete")
+        self.setWindowTitle(f"Удаление записи из таблицы '{table_info[self.tbl_name]['rus_name']}'")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
         self.QBtn.clicked.connect(self.delete)
@@ -17,7 +17,7 @@ class DeleteDialog(QDialog):
         self.deleteinput = QLineEdit()
         self.onlyInt = QIntValidator()
         self.deleteinput.setValidator(self.onlyInt)
-        self.deleteinput.setPlaceholderText("Roll No.")
+        self.deleteinput.setPlaceholderText("Введите номер записи")
         layout.addWidget(self.deleteinput)
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
@@ -31,12 +31,12 @@ class DeleteDialog(QDialog):
         try:       
             #взяли данные из таблицы
             server.DELETE(self.tbl_name,str(delrol)) 
-            QMessageBox.information(QMessageBox(),'Successful','Deleted From Table Successful')
+            QMessageBox.information(QMessageBox(),'Успешно','Запись успешно удалена из таблицы')
             self.close()
 
             
 
             
         except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not Delete from the database.')
+            QMessageBox.warning(QMessageBox(), 'Ошибка', 'Не удалось удалить запись')
         server.exit()

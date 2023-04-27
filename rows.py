@@ -28,16 +28,17 @@ class PushedTable(QMainWindow):
             file_menu = self.menuBar().addMenu("&Действия")
         
         #если есть связанные таблицы, добавим соответствующее поле
-            if (len(table_info[self.tbl_name]['fkey'])!= 0):
-                fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
+            # if (len(table_info[self.tbl_name]['fkey'])!= 0):
+            #     fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
         #добавляем поиск для админа
-        if self.isAdmin==True:
+        if self.isAdmin==True and self.tbl_name == 'students' or self.tbl_name == 'courses' or self.tbl_name == 'teachers':
             # pass
             searchuser_action = QAction(QIcon("icon/seach.png"), "Поиск", self)
             searchuser_action.triggered.connect(lambda: self.search(self.tbl_name, True))
             file_menu.addAction(searchuser_action)
-
-        if (self.isAdmin==False):
+        
+        #отчеты
+        if (1):
 
             self.report_menu = self.menuBar().addMenu("&Отчеты")
             
@@ -61,13 +62,13 @@ class PushedTable(QMainWindow):
             searchuser_action.triggered.connect(lambda: self.search('students', self.isAdmin))
             self.add_rating.addAction(searchuser_action)
 
-        help_menu = self.menuBar().addMenu("&About")
+        help_menu = self.menuBar().addMenu("&О разработчике")
         if (self.isAdmin==False):
-            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления пользователя. ")
+            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления пользователя.\n Таблица '{table_info[self.tbl_name]['rus_name']}'")
         else:
-            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления администратора")
+            self.setWindowTitle(f"АС электронных мультимедийных курсов. Панель управления администратора.\n Таблица '{table_info[self.tbl_name]['rus_name']}'")
         
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(900, 600)
 
         #добавляем вывод таблиц если просмотра:
         if (1):
@@ -99,7 +100,7 @@ class PushedTable(QMainWindow):
                 
 
         #добавляем отчеты для обычных пользователей
-        if (self.isAdmin==False):
+        if (1):
             
             self.reports = []
             #надо добавить кнопки на все таблицы
@@ -139,14 +140,14 @@ class PushedTable(QMainWindow):
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
         if (self.isAdmin==True):
-            btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add ", self)
+            btn_ac_adduser = QAction(QIcon("icon/add.png"), "Добавить запись", self)
             btn_ac_adduser.triggered.connect(self.insert)
-            btn_ac_adduser.setStatusTip("Add")
+            btn_ac_adduser.setStatusTip("Добавить запись")
             self.toolbar.addAction(btn_ac_adduser)
         if (self.isAdmin==True):
-            btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
+            btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Перезагрузить базу",self)
             btn_ac_refresh.triggered.connect(self.loaddata)
-            btn_ac_refresh.setStatusTip("Refresh")
+            btn_ac_refresh.setStatusTip("Перезагрузить базу")
             self.toolbar.addAction(btn_ac_refresh)
 
         if (self.isAdmin==True):
@@ -157,47 +158,47 @@ class PushedTable(QMainWindow):
 
         #Это кнопки на панели управления
         if (self.isAdmin==True):
-            adduser_action = QAction(QIcon(" "),"Insert", self)
+            adduser_action = QAction(QIcon(" "),"Добавить запись", self)
             adduser_action.triggered.connect(self.insert)
             file_menu.addAction(adduser_action)
         #здесь я добавляю кнопки на переход на связанные таблицы
-        if (self.isAdmin==True):
+        # if (self.isAdmin==True):
             
-            self.fkey_table = table_info[self.tbl_name]['fkey'] 
-            #надо добавить кнопки на все таблицы
-            if len(table_info[self.tbl_name]['fkey']) == 1:
-                watch_fkey_action = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
-                data = str(table_info[self.tbl_name]['fkey'][0])
-                if type(data)!=None:
-                    watch_fkey_action.triggered.connect(lambda: self.fkey_open(data))
+        #     self.fkey_table = table_info[self.tbl_name]['fkey'] 
+        #     #надо добавить кнопки на все таблицы
+        #     if len(table_info[self.tbl_name]['fkey']) == 1:
+        #         watch_fkey_action = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
+        #         data = str(table_info[self.tbl_name]['fkey'][0])
+        #         if type(data)!=None:
+        #             watch_fkey_action.triggered.connect(lambda: self.fkey_open(data))
 
-                fkey_menu.addAction(watch_fkey_action)
+        #         fkey_menu.addAction(watch_fkey_action)
 
-            if len(table_info[self.tbl_name]['fkey'] ) == 2:
-                watch_fkey_action1 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
-                data1 = str(table_info[self.tbl_name]['fkey'][0])
-                if type(data1)!=None:
-                    watch_fkey_action1.triggered.connect(lambda: self.fkey_open(data1))
+        #     if len(table_info[self.tbl_name]['fkey'] ) == 2:
+        #         watch_fkey_action1 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][0]), self)
+        #         data1 = str(table_info[self.tbl_name]['fkey'][0])
+        #         if type(data1)!=None:
+        #             watch_fkey_action1.triggered.connect(lambda: self.fkey_open(data1))
                     
 
-                watch_fkey_action2 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][1]), self)
-                data2 = str(table_info[self.tbl_name]['fkey'][1])
-                if type(data2)!=None:
-                    watch_fkey_action2.triggered.connect(lambda: self.fkey_open(data2))
+        #         watch_fkey_action2 = QAction(QIcon(" "),str(table_info[self.tbl_name]['fkey'][1]), self)
+        #         data2 = str(table_info[self.tbl_name]['fkey'][1])
+        #         if type(data2)!=None:
+        #             watch_fkey_action2.triggered.connect(lambda: self.fkey_open(data2))
 
-                fkey_menu.addAction(watch_fkey_action1)
-                fkey_menu.addAction(watch_fkey_action2)
+        #         fkey_menu.addAction(watch_fkey_action1)
+        #         fkey_menu.addAction(watch_fkey_action2)
         
 
-        
+            1
         if (self.isAdmin==True):
-            deluser_action = QAction(QIcon("icon/trash.png"), "Delete", self)
+            deluser_action = QAction(QIcon("icon/trash.png"), "Удалить запись", self)
             deluser_action.triggered.connect(self.delete)
             file_menu.addAction(deluser_action)
 
         #кнопка поиска
         if (1):
-            about_action = QAction(QIcon("icon/info.png"),"Developer", self)
+            about_action = QAction(QIcon("icon/info.png"),"Разработчик", self)
             about_action.triggered.connect(self.about)
             help_menu.addAction(about_action)
 

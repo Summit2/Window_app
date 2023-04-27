@@ -14,20 +14,20 @@ class AuthDialog(QDialog):
         layout = QVBoxLayout()
         self.logininput = QLineEdit()
         
-        self.logininput.setPlaceholderText("Enter Login.")
+        self.logininput.setPlaceholderText("Введите логин")
 
         self.passinput = QLineEdit()
 
         self.passinput.setEchoMode(QLineEdit.Password)
-        self.passinput.setPlaceholderText("Enter Password.")
+        self.passinput.setPlaceholderText("Введите пароль")
         self.QBtn = QPushButton()
-        self.QBtn.setText("Auth")
-        self.setWindowTitle('Auth')
+        self.QBtn.setText("Войти")
+        self.setWindowTitle('Окно входа')
         self.QBtn.clicked.connect(self.login)
 
-        title = QLabel("Enter login and password")
+        title = QLabel("Введите логин и пароль\n")
         font = title.font()
-        font.setPointSize(16)
+        font.setPointSize(12)
         title.setFont(font)
 
         layout.addWidget(title)
@@ -46,6 +46,6 @@ class AuthDialog(QDialog):
                 self.isAdmin = False
 
             else:
-                QMessageBox.warning(self, 'Error', 'Wrong Login or Password')
+                QMessageBox.warning(self, 'Ошибка', 'Неверный логин или пароль')
 
 

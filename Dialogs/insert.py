@@ -7,9 +7,9 @@ class InsertDialog(QDialog):
         self.columns = columns
 
         self.QBtn = QPushButton()
-        self.QBtn.setText("Register")
+        self.QBtn.setText("Добавить запись")
 
-        self.setWindowTitle(f"Add {tbl_name}")
+        self.setWindowTitle(f"Новая запись в таблицу '{table_info[tbl_name]['rus_name']}'")
         self.setFixedWidth(300)
         self.setFixedHeight(250)
 
@@ -174,13 +174,13 @@ class InsertDialog(QDialog):
 
             server = Server()
 
-            server.INSERT(self.tbl_name, self.columns, self.insert_values)
+            server.INSERT(self.tbl_name, table_info[self.tbl_name]['columns'], self.insert_values)
             
             server.exit()
 
-            QMessageBox.information(QMessageBox(),'Successful','Info added successfully to the database.')
+            QMessageBox.information(QMessageBox(),'Успех','Информация успешно добавлена. Обновите базу')
             self.close()
 
         except Exception:
             # print(Exception)
-            QMessageBox.warning(QMessageBox(), 'Error', 'Could not add student to the database.')
+            QMessageBox.warning(QMessageBox(), 'Ошибка', 'Не удалось добавить запись')
