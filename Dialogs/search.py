@@ -12,19 +12,21 @@ class SearchDialog(QDialog):
         self.tbl_name = tbl_name
 
         self.QBtn = QPushButton()
-        self.QBtn.setText("Search")
+        self.QBtn.setText("Поиск")
         if self.isAdmin == True:
             self.setWindowTitle("Поиск по таблице")
+             
 
         if self.tbl_name == 'courses' and self.isAdmin == False:
 
             self.setWindowTitle("Поиск по имени студентов")
+            
         if self.tbl_name == 'teachers' and self.isAdmin == False:
 
-            self.setWindowTitle("Поиск по имени преподавателей")
+            self.setWindowTitle("Начните вводить имя преподавателя")
         if self.tbl_name == 'courses' and self.isAdmin == False:
 
-            self.setWindowTitle("Поиск по названию курсов")
+            self.setWindowTitle("Начните вводить название курса")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
         self.QBtn.clicked.connect(lambda: self.search())
@@ -34,7 +36,7 @@ class SearchDialog(QDialog):
         self.searchinput = QLineEdit()
         # self.onlyInt = QIntValidator()
         # self.searchinput.setValidator(self.onlyInt)
-        self.searchinput.setPlaceholderText("Введите запрос") 
+        
         layout.addWidget(self.searchinput)
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
@@ -48,9 +50,9 @@ class SearchDialog(QDialog):
         if not self.isAdmin:
             if self.tbl_name == 'courses':
                 self.extra_table = Table('courses',['Название','Цена',"Рейтинг"],f"""
-                select course_name, count( round( (cast (price as numeric)),2 ) ), round(sum(cast (score as numeric))/(count(score)),2 ) from courses inner join progress on  
+                select course_name, round(sum(courses.price)/count(price),2), round(sum(cast (score as numeric))/(count(score)),2 ) from courses inner join progress on  
                     courses.id_course = progress.id_course where course_name like '{searchrol}%'
-					group by course_name ""","Поиск по названию курсов")
+					group by course_name  ""","Поиск по названию курсов")
                 self.extra_table.show()
                 self.hide()
             elif self.tbl_name == 'teachers':

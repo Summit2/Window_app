@@ -11,16 +11,21 @@ from headers import *
 
 
 class PushedTable(QMainWindow):
-    def __init__(self, tbl_name = 'courses', isAdmin = True):
+    def __init__(self, tbl_name = 'courses', isAdmin = None):
         self.isAdmin=isAdmin
         if isAdmin == None:
-            self.isAdmin=True 
+            self.isAdmin=False 
         
         super(PushedTable, self).__init__()
         self.back_button_counter = 0
         #запомнили название таблицы
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
+
+        #добавим личный кабинет
+        if self.isAdmin==False:
+            pass
+
 
         # file_menu = self.menuBar().addMenu("&Действия")    
         #добавили графу связанные таблицы
@@ -31,7 +36,7 @@ class PushedTable(QMainWindow):
             # if (len(table_info[self.tbl_name]['fkey'])!= 0):
             #     fkey_menu = self.menuBar().addMenu("&Просмотр подчиненных таблиц")
         #добавляем поиск для админа
-        if self.isAdmin==True and self.tbl_name == 'students' or self.tbl_name == 'courses' or self.tbl_name == 'teachers':
+        if self.isAdmin==True and (self.tbl_name == 'students' or self.tbl_name == 'courses' or self.tbl_name == 'teachers'):
             # pass
             searchuser_action = QAction(QIcon("icon/seach.png"), "Поиск", self)
             searchuser_action.triggered.connect(lambda: self.search(self.tbl_name, True))
@@ -112,7 +117,7 @@ class PushedTable(QMainWindow):
             self.report_menu.addAction(report_all_students)
 
             self.reports.append( "Цена курсов")
-            report_price = QAction(QIcon(" "), "Цена курсов", self)
+            report_price = QAction(QIcon(" "), "Цена курсов по возрастанию", self)
             report_price.triggered.connect(lambda: self.get_report(1))
             self.report_menu.addAction(report_price)
 
@@ -128,7 +133,10 @@ class PushedTable(QMainWindow):
 
 
 
-        
+        button_edit = QPushButton("Изменить", self)
+        button_edit.setGeometry(1060, 60, 100, 40)
+        button_edit.clicked.connect(lambda: self.edit_data(self))
+
             
 
 
@@ -162,6 +170,22 @@ class PushedTable(QMainWindow):
             adduser_action.triggered.connect(self.insert)
             file_menu.addAction(adduser_action)
         #здесь я добавляю кнопки на переход на связанные таблицы
+
+        # def edit_data(self, table_name):
+        #         try:
+        #             selected_row = table_name.currentRow()
+        #             player_id = table_name.item(selected_row, 0).text()
+        #             last_name = table_name.item(selected_row, 1).text()
+        #             first_name = table_name.item(selected_row, 2).text()
+        #             age = table_name.item(selected_row, 3).text()
+        #             position = table_name.item(selected_row, 4).text()
+
+        #             cursor.execute("UPDATE CSKA_players SET last_name = %s, first_name = %s, age = %s, position = %s WHERE player_id = %s", (last_name, first_name, age, position, player_id,))
+        #             conn.commit()
+        #             self.admin_window.append("запись успешно изменена")
+        #         except:
+        #             self.admin_window.append("запись не удалось изменить")
+
         # if (self.isAdmin==True):
             
         #     self.fkey_table = table_info[self.tbl_name]['fkey'] 
@@ -213,7 +237,7 @@ class PushedTable(QMainWindow):
             
         elif index == 1:
             self.report_table = Table('courses', ['Название','Цена (руб)'],"""
-            select course_name as Название, sum(price) as Название from courses group by course_name;""","""
+            select course_name as Название, sum(price) as pr  from courses group by course_name order by pr ;""","""
             Отчет о ценах курсов""")
 
         elif index == 2:
@@ -252,7 +276,40 @@ class PushedTable(QMainWindow):
                 # print(table_data[i][2])
                 table_data[i][2] = temp_data
                 temp.exit()
+        elif self.tbl_name == 'courses':
+            
+            for i in range(len(table_data)):
+                temp = Server()
+                temp_area = (temp.cur.execute(f'select area_name from subject_area where id_area={table_data[i][4]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                table_data[i][4] = temp_data
+                temp.exit()
+
+                temp = Server()
+                temp_teacher = (temp.cur.execute(f'select fio from teachers where id_teacher={table_data[i][5]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                # print(table_data[i][2])
+                table_data[i][5] = temp_data
+                temp.exit()
+        elif self.tbl_name == 'manager':
+            
+            for i in range(len(table_data)):
+                temp = Server()
+                temp_area = (temp.cur.execute(f'select area_name from subject_area where id_area={table_data[i][5]}'))
+                temp_data = temp.cur.fetchall()[0][0]
+                # print(temp_data)
+                table_data[i] = list(table_data[i])
+                table_data[i][5] = temp_data
+                temp.exit()
+
                 
+        
+
+        # печатаем таблицы
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)

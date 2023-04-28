@@ -52,7 +52,7 @@ class RatingDialog(QDialog):
 
         layout.addWidget(self.name)
         self.courses_names = QComboBox()
-        semidata=["С++ для чайников",
+        data=["С++ для чайников",
             "Оптика для тех, у кого лапки",
             "Java для чайников",
             "Основы программирования",
@@ -60,16 +60,35 @@ class RatingDialog(QDialog):
             "Ядерная физика для самых маленьких",
             "Интегралы и Дифференциальные уравнения",
             "Использование штанги для становления чемпионом"]
-        self.courses_names.addItem(semidata[0])
-        self.courses_names.addItem(semidata[1])
-        self.courses_names.addItem(semidata[2])
-        self.courses_names.addItem(semidata[3])
-        self.courses_names.addItem(semidata[4])
-        self.courses_names.addItem(semidata[5])
-        self.courses_names.addItem(semidata[6])
-        self.courses_names.addItem(semidata[7])
-        layout.addWidget(self.courses_names)
+        
+        s = Server()
+        s.cur.execute("""select course_name from courses;""")
+        semidata = [i[0] for i in s.cur.fetchall()]
+        
+        s.exit()
 
+        s =Server()
+        s.cur.execute("select course_name from progress  inner join courses on progress.id_course = courses.id_course where progress.id_student = 19;")
+        is_complete = [i[0] for i in s.cur.fetchall()]
+
+
+        
+
+
+        print(is_complete)
+        for i in range(len( semidata )):
+            if semidata[i] in is_complete:
+                self.courses_names.addItem(semidata[i])
+            # self.courses_names.addItem(semidata[1])
+            # self.courses_names.addItem(semidata[2])
+            # self.courses_names.addItem(semidata[3])
+            # self.courses_names.addItem(semidata[4])
+            # self.courses_names.addItem(semidata[5])
+            # self.courses_names.addItem(semidata[6])
+            # self.courses_names.addItem(semidata[7])
+        layout.addWidget(self.courses_names)
+        
+        s.exit()
         # self.mobileinput = QLineEdit()
         # self.mobileinput.setPlaceholderText("Mobile")
         # self.mobileinput.setInputMask('99999 99999') # set validator for user can only input interger input
@@ -104,6 +123,7 @@ class RatingDialog(QDialog):
         print(c_name)
         serv.cur.execute( f"select id_course from courses where course_name = '{c_name}' ;")
         name_course  = (serv.cur.fetchall())[0][0]
+        print(name_course)
         serv.cur.execute(f"insert into progress (id_student,id_course,is_complete,score) values (19,'{name_course}','true',{grade});")
         serv.exit()
 
