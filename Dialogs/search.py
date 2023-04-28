@@ -97,6 +97,9 @@ class SearchDialog(QDialog):
                         "Поиск по имени студентов")
                 self.extra_table.show()
                 self.hide()
+            
+                self.extra_table.show()
+                self.hide()
 
         # try:
         #     self.conn = sqlite3.connect("database.db")

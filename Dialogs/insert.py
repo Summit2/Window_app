@@ -104,8 +104,9 @@ class InsertDialog(QDialog):
             layout.addWidget(self.input6) 
 
         elif self.tbl_name == 'subject_area':
-            self.input1 = QLineEdit()
-            self.input1.setPlaceholderText(next(gen))
+            next(gen)
+            self.input2 = QLineEdit()
+            self.input2.setPlaceholderText(next(gen))
             
             # layout.addWidget(self.input1)  
             layout.addWidget(self.input2) 
@@ -131,7 +132,7 @@ class InsertDialog(QDialog):
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
     def get_column(self):
-        for col in self.columns:
+        for col in table_info[self.tbl_name]['columns_rus']:
             yield str(col)
     def add(self):
         #массив значений для insert 

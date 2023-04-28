@@ -15,16 +15,20 @@ class PushedTable(QMainWindow):
         self.isAdmin=isAdmin
         if isAdmin == None:
             self.isAdmin=False 
-        
+        # self.is_loaded = False #если таблица не загружена, мы не подпадем в update таблицы
         super(PushedTable, self).__init__()
         self.back_button_counter = 0
         #запомнили название таблицы
         self.tbl_name = tbl_name
         self.columns = table_info[tbl_name]['columns']
 
-        #добавим личный кабинет
-        if self.isAdmin==False:
-            pass
+        self.tableWidget = QTableWidget()
+
+        #добавим возможность изменения внутри таблицы
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.itemChanged.connect(self.handle_item_changed)
+
+        
 
 
         # file_menu = self.menuBar().addMenu("&Действия")    
@@ -57,6 +61,8 @@ class PushedTable(QMainWindow):
             self.add_rating.addAction(about_action)
             # поиск для всех 
 
+
+
             searchcourses_action = QAction(QIcon("icon.png"), "Поиск по названию курсов", self)
             searchcourses_action.triggered.connect(lambda: self.search('courses',self.isAdmin))
             self.add_rating.addAction(searchcourses_action)
@@ -77,7 +83,7 @@ class PushedTable(QMainWindow):
 
         #добавляем вывод таблиц если просмотра:
         if (1):
-            self.tableWidget = QTableWidget()
+            
             self.setCentralWidget(self.tableWidget)
             self.tableWidget.setAlternatingRowColors(True)
             
@@ -133,9 +139,9 @@ class PushedTable(QMainWindow):
 
 
 
-        button_edit = QPushButton("Изменить", self)
-        button_edit.setGeometry(1060, 60, 100, 40)
-        button_edit.clicked.connect(lambda: self.edit_data(self))
+        # button_edit = QPushButton("Изменить", self)
+        # button_edit.setGeometry(1060, 60, 100, 40)
+        # button_edit.clicked.connect(lambda: self.edit_data(self))
 
             
 
@@ -166,6 +172,7 @@ class PushedTable(QMainWindow):
 
         #Это кнопки на панели управления
         if (self.isAdmin==True):
+
             adduser_action = QAction(QIcon(" "),"Добавить запись", self)
             adduser_action.triggered.connect(self.insert)
             file_menu.addAction(adduser_action)
@@ -215,6 +222,7 @@ class PushedTable(QMainWindow):
         
 
             1
+        #удаление записи
         if (self.isAdmin==True):
             deluser_action = QAction(QIcon("icon/trash.png"), "Удалить запись", self)
             deluser_action.triggered.connect(self.delete)
@@ -225,6 +233,27 @@ class PushedTable(QMainWindow):
             about_action = QAction(QIcon("icon/info.png"),"Разработчик", self)
             about_action.triggered.connect(self.about)
             help_menu.addAction(about_action)
+
+
+
+    #функция для изменения информации в таблице
+    def handle_item_changed(self, item):
+        row = item.row() #Строка
+        column = item.column()   #столбец
+        # print('row,column =', row, column)
+        value = item.text()  
+        table = self.tbl_name
+        data = self.table_data
+        # проверка на то, что мы не пытаемся заменить какой-либо id
+        if not (column ==0 or (self.tbl_name == 'manager' and column == 5) or (self.tbl_name == 'courses' and (column == 4 or column == 5)) or
+        (self.tbl_name == 'progress' and (column == 1 or column == 2 or column ==4))):
+            
+            # print(f"Cell {row},{column} changed to {value}")
+            s = Server()
+            s.cur.execute(f"""update {table} set {table_info[table]['columns'][column]} = '{value}'
+                                      where {table_info[table]['columns'][0]} = {data[row][0]} ; """)
+            s.exit()
+        
 
     #для пользователей просмотр отчетов
     def get_report(self, index):
@@ -253,6 +282,9 @@ class PushedTable(QMainWindow):
     #загрузка данных с сервера
     def loaddata(self):
         
+        self.tableWidget.clearContents()
+        self.tableWidget.setRowCount(0)
+        self.is_loaded = True
         #создали соединение
         server = Server()
         #взяли данные из таблицы
@@ -309,8 +341,10 @@ class PushedTable(QMainWindow):
                 
         
 
+        #Запомнили данные для возможности изменения таблицы
+        self.table_data = table_data
+        # print(table_data)
         # печатаем таблицы
-        self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(table_data):
             self.tableWidget.insertRow(row_number)
             for column_number, data in enumerate(row_data):
@@ -318,7 +352,7 @@ class PushedTable(QMainWindow):
 
         server.exit()
         
-
+        self.is_loaded == False
     def handlePaintRequest(self, printer):
         document = QTextDocument()
         cursor = QTextCursor(document)
@@ -375,6 +409,8 @@ if __name__=='__main__':
     
     window = PushedTable()
     window.show()
+    
     window.loaddata()
+    
 
     sys.exit(app.exec_())
