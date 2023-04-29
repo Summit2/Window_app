@@ -2,6 +2,9 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtWidgets import QApplication, QWidget, QToolButton, QLabel, QVBoxLayout, QHBoxLayout
 
+
+
+
 class All_tables(QWidget):    
 
     def __init__(self, parent=None, t = ['courses','teachers','students','subject_area','progress','manager','progress']):
