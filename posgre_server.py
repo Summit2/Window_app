@@ -60,12 +60,14 @@ class Server:
     
 if __name__ == '__main__':
         test = Server()
-        print(test.SELECT('progress'))
+        # print(test.cur.execute('create or replace table test (id_test serial, txt text);'))
         # test.INSERT('courses',None,("'Perfect English 2'",'1000','54','5','3'))
-        # test.INSERT('progress',['id_student','id_course','is_complete','score'],['19','2' ,"'True'", str(5)])
-        test.INSERT('progress',['id_student','id_course','is_complete','score'],['19',"'Основы программирования'" ,'"True"', '5'])
+        test.INSERT('"progress"',['id_student','id_course','is_complete','score'],['19','2' ,"'True'", str(5)])
+        # test.INSERT('progress',['id_student','id_course','is_complete','score'],['19',"'Основы программирования'" ,'"True"', '5'])
        
-        print(test.SELECT('progress'))
+        # print(test.SELECT('progress'))
         # test.DELETE('courses',str(44))
-        # print(test.SELECT('courses')) 
+        # test.cur.execute('select * from test;')
+        # print(test.cur.fetchall())
+        # test.cur.execute('drop table test;') 
         test.exit()
