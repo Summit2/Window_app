@@ -1,6 +1,10 @@
 from headers import *
 class InsertDialog(QDialog):
     def __init__(self,tbl_name = 'students', columns = [], isAdmin = None):
+        '''
+        для каждого inserta для конкретной таблице, если есть внешние ключи,
+        дать пользователю не вписывать номер, а выбирать внешний ключ через select из другой таблицы
+        '''
         super(InsertDialog, self).__init__()
 
         self.tbl_name =tbl_name
