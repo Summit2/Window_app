@@ -62,12 +62,42 @@ if __name__ == '__main__':
         test = Server()
         # print(test.cur.execute('create or replace table test (id_test serial, txt text);'))
         # test.INSERT('courses',None,("'Perfect English 2'",'1000','54','5','3'))
-        test.INSERT('"progress"',['id_student','id_course','is_complete','score'],['19','2' ,"'True'", str(5)])
-        # test.INSERT('progress',['id_student','id_course','is_complete','score'],['19',"'Основы программирования'" ,'"True"', '5'])
-       
-        # print(test.SELECT('progress'))
-        # test.DELETE('courses',str(44))
-        # test.cur.execute('select * from test;')
-        # print(test.cur.fetchall())
-        # test.cur.execute('drop table test;') 
+        # test.INSERT('progress',['id_student','id_course','is_complete','score'],['19','2' ,"'True'", str(5)])
+#         test.cur.execute("""create table subject_area (               
+# id_area serial unique,
+# area_name text);""")
+#         test.cur.execute("""create table students (                    
+# id_student serial unique,
+# fio text,
+# login text,
+# pswd text,
+# email text); """)
+#         test.cur.execute(""" create table manager(                    
+# id_manager serial,
+# full_name text,
+# login text,
+# pswd text,
+# email text,
+# id_area int references subject_area (id_area));""")
+#         test.cur.execute(""" create table teachers (                  
+# id_teacher serial unique,
+# fio text,
+# login text,
+# pswd text,
+# email text);""")
+#         test.cur.execute(""" create table courses (                           
+# id_course serial unique,
+# course_name text,
+# price numeric (10,2),
+# duration int,
+# id_area int references subject_area (id_area),
+# id_teacher int references teachers(id_teacher));""")
+        
+#         # print(test.SELECT('progress'))
+#         # test.DELETE('courses',str(44))
+#         # test.cur.execute('select * from test;')
+#         # print(test.cur.fetchall())
+#         # test.cur.execute('drop table test;') 
+#         # test.INSERT('progress',['id_student','id_course','is_complete','score'],['19',"'Основы программирования'" ,'"True"', '5'])
+        test.cur.execute('''select * from progress;''')
         test.exit()

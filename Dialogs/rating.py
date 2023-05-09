@@ -12,7 +12,7 @@ class RatingDialog(QDialog):
         self.setFixedWidth(300)
         self.setFixedHeight(250)
 
-        # self.QBtn.clicked.connect('')
+        
 
         layout = QVBoxLayout()
         
