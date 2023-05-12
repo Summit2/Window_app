@@ -58,14 +58,31 @@ class InsertDialog(QDialog):
             self.input4.setPlaceholderText(next(gen))
             self.input5 = QLineEdit()
             self.input5.setPlaceholderText(next(gen))
-            self.input6 = QLineEdit()
-            self.input6.setPlaceholderText(next(gen))
+
+            # добавим предметную область, выведя все возможные 
+            self.area_box_name = QLabel("Предметная область")
+            
+            self.area_box = QComboBox()
+            #теперь в area box надо добавить все предметные области запросом
+            s = Server()
+            s.cur.execute('select id_area, area_name from subject_area;')
+            self.all_areas = s.cur.fetchall()
+            for a in self.all_areas:
+                self.area_box.addItem(f"{a[1]}")
+            s.exit()
+            # self.input6 = QLineEdit()
+            # self.input6.setPlaceholderText(next(gen))
             # layout.addWidget(self.input1)  
             layout.addWidget(self.input2) 
             layout.addWidget(self.input3) 
             layout.addWidget(self.input4) 
             layout.addWidget(self.input5) 
-            layout.addWidget(self.input6) 
+            
+            
+            
+            # layout.addWidget(self.input6) 
+            layout.addWidget(self.area_box_name)
+            layout.addWidget(self.area_box) 
 
             
         elif self.tbl_name == 'teachers':
@@ -167,7 +184,16 @@ class InsertDialog(QDialog):
             self.insert_values.append(f"'{self.input3.text()}'")
             self.insert_values.append(f"'{self.input4.text()}'")
             self.insert_values.append(f"'{self.input5.text()}'")
-            self.insert_values.append(self.input6.text())
+            #надо добавить предметную область по индексу
+            area = self.area_box.itemText(self.area_box.currentIndex())
+            print(area)
+            s = Server()
+            s.cur.execute(f"select id_area from subject_area where area_name = '{area}'")
+            area_for_manager = (s.cur.fetchall())[0][0]
+            print(area_for_manager)
+            
+            s.exit()
+            self.insert_values.append(str(area_for_manager))
         elif self.tbl_name == 'progress':  
             self.insert_values.append(self.input2.text())
             self.insert_values.append(self.input3.text())
@@ -178,7 +204,7 @@ class InsertDialog(QDialog):
         try:
 
             server = Server()
-
+            print(self.tbl_name, table_info[self.tbl_name]['columns'], self.insert_values)
             server.INSERT(self.tbl_name, table_info[self.tbl_name]['columns'], self.insert_values)
             
             server.exit()
