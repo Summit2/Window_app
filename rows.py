@@ -293,7 +293,7 @@ class PushedTable(QMainWindow):
             
             for i in range(len(table_data)):
                 temp = Server()
-                temp_student = (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
+                (temp.cur.execute(f'select fio from students where id_student={table_data[i][1]}'))
                 temp_data = temp.cur.fetchall()[0][0]
                 # print(temp_data)
                 table_data[i] = list(table_data[i])
@@ -301,7 +301,7 @@ class PushedTable(QMainWindow):
                 temp.exit()
 
                 temp = Server()
-                temp_student = (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
+                (temp.cur.execute(f'select course_name from courses where id_course={table_data[i][2]}'))
                 temp_data = temp.cur.fetchall()[0][0]
                 # print(temp_data)
                 table_data[i] = list(table_data[i])

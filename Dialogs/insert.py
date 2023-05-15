@@ -65,7 +65,7 @@ class InsertDialog(QDialog):
             self.area_box = QComboBox()
             #теперь в area box надо добавить все предметные области запросом
             s = Server()
-            s.cur.execute('select id_area, area_name from subject_area;')
+            s.cur.execute('select id_area, area_name from subject_area order by area_name;')
             self.all_areas = s.cur.fetchall()
             for a in self.all_areas:
                 self.area_box.addItem(f"{a[1]}")
@@ -130,7 +130,7 @@ class InsertDialog(QDialog):
             self.area_box = QComboBox()
             #теперь в area box надо добавить все предметные области запросом
             s = Server()
-            s.cur.execute('select id_area, area_name from subject_area;')
+            s.cur.execute('select id_area, area_name from subject_area order by area_name;')
             self.all_areas = s.cur.fetchall()
             for a in self.all_areas:
                 self.area_box.addItem(f"{a[1]}")
@@ -148,7 +148,7 @@ class InsertDialog(QDialog):
             self.teachers_box = QComboBox()
             #теперь в area box надо добавить все предметные области запросом
             s = Server()
-            s.cur.execute('select id_teacher, fio from teachers;')
+            s.cur.execute('select id_teacher, fio from teachers order by fio;')
             self.all_teachers = s.cur.fetchall()
             for a in self.all_teachers:
                 self.teachers_box.addItem(f"{a[1]}")
@@ -169,25 +169,62 @@ class InsertDialog(QDialog):
             layout.addWidget(self.input2) 
             
         elif self.tbl_name == 'progress':
+
+            self.student_box_name = QLabel("Студент")
+            
+            self.student_box = QComboBox()
+            #теперь в area box надо добавить все предметные области запросом
+            s = Server()
+            s.cur.execute('select id_student, fio from students order by fio;')
+            self.all_students = s.cur.fetchall()
+            for a in self.all_students:
+                self.student_box.addItem(f"{a[1]}")
+            s.exit()
+
+
+
+            
+
+           
+            self.course_box_name = QLabel("Курс")
+            
+            self.course_box = QComboBox()
+            #теперь в area box надо добавить все предметные области запросом
+            s = Server()
+            s.cur.execute('select id_course, course_name from courses order by course_name;')
+            self.all_courses = s.cur.fetchall()
+            for a in self.all_courses:
+                self.course_box.addItem(f"{a[1]}")
+            s.exit()
+
+
+
+             
             self.input1 = QLineEdit()
             self.input1.setPlaceholderText(next(gen))
             self.input2 = QLineEdit()
             self.input2.setPlaceholderText(next(gen))
             self.input3 = QLineEdit()
             self.input3.setPlaceholderText(next(gen))
-            self.input4 = QLineEdit()
-            self.input4.setPlaceholderText(next(gen))
+            self.input4 = QLabel("Если вы поставите оценку курсу,\nто он будет считаться пройденным ")
+            (next(gen))#self.input4.setPlaceholderText
             self.input5 = QLineEdit()
             self.input5.setPlaceholderText(next(gen))
             
             
-            layout.addWidget(self.input2) 
-            layout.addWidget(self.input3) 
+            
+            layout.addWidget(self.student_box_name)
+            layout.addWidget(self.student_box) 
+            layout.addWidget(self.course_box_name)
+            layout.addWidget(self.course_box)
             layout.addWidget(self.input4) 
             layout.addWidget(self.input5) 
 
+            
+
         layout.addWidget(self.QBtn)
         self.setLayout(layout)
+
     def get_column(self):
         for col in table_info[self.tbl_name]['columns_rus']:
             yield str(col)
@@ -244,12 +281,29 @@ class InsertDialog(QDialog):
             
             s.exit()
             self.insert_values.append(str(area_for_manager))
+
+
         elif self.tbl_name == 'progress':  
-            self.insert_values.append(self.input2.text())
-            self.insert_values.append(self.input3.text())
-            self.insert_values.append(self.input4.text())
+            
+           
+            student = self.student_box.itemText(self.student_box.currentIndex())
+
+            s = Server()
+            s.cur.execute(f"select id_student from students where fio = '{student}'")
+            id_student = (s.cur.fetchall())[0][0]
+            s.exit()
+
+            course = self.course_box.itemText(self.course_box.currentIndex())
+            # print(area)
+            s = Server()
+            s.cur.execute(f"select id_course from courses where course_name = '{course}'")
+            id_course = (s.cur.fetchall())[0][0]
+
+
+            self.insert_values.append(str(id_student))
+            self.insert_values.append(str(id_course))
+            self.insert_values.append(f"{True}")
             self.insert_values.append(f"'{self.input5.text()}'")
-            self.insert_values.append(self.input6.text()) 
 
         try:
 
